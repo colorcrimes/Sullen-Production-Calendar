@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SULLEN — Release Calendar 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&family=Barlow:wght@400;500&display=swap');
+
+  :root {
+    --black: #080808;
+    --dark: #101010;
+    --card: #161616;
+    --border: #242424;
+    --red: #c8102e;
+    --yellow: #f5c518;
+    --green: #2db84b;
+    --pink: #e91e8c;
+    --blue: #1565c0;
+    --orange: #e65c00;
+    --purple: #7b2fbe;
+    --teal: #00838f;
+    --white: #f0ede8;
+    --muted: #555;
+    --font-d: 'Bebas Neue', sans-serif;
+    --font-ui: 'Barlow Condensed', sans-serif;
+    --font-b: 'Barlow', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-b);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px;
+    background: var(--dark);
+    border-bottom: 2px solid var(--red);
+    position: sticky; top: 0; z-index: 100;
+    gap: 16px;
+  }
+  .logo { font-family: var(--font-d); font-size: 26px; letter-spacing: 5px; white-space: nowrap; }
+  .logo em { color: var(--red); font-style: normal; }
+  .header-sub { font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+  .header-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+
+  .btn {
+    font-family: var(--font-ui); font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; border: none; cursor: pointer; padding: 7px 16px;
+    border-radius: 2px; transition: all .15s; white-space: nowrap;
+  }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #e01535; }
+  .btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: #555; }
+  .btn-sm { padding: 5px 11px; font-size: 11px; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 22px;
+    background: #0d0d0d;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tlabel { font-family: var(--font-ui); font-size: 10px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .chip {
+    font-family: var(--font-ui); font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 3px 11px; border-radius: 2px; cursor: pointer;
+    border: 1px solid transparent; white-space: nowrap; transition: all .15s;
+  }
+  .chip.active, .chip:hover { border-color: currentColor; }
+  .chip-all { color: var(--white); }
+  .chip-sp { color: var(--yellow); }
+  .chip-su { color: var(--green); }
+  .chip-fa { color: var(--orange); }
+  .chip-ho { color: var(--blue); }
+  .tbar-divider { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+
+  .main { display: flex; height: calc(100vh - 86px); }
+
+  .sidebar {
+    width: 210px; min-width: 210px;
+    background: var(--dark); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .sb-section { padding: 14px; border-bottom: 1px solid var(--border); }
+  .sb-title { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .ctag {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 7px; border-radius: 2px; cursor: pointer;
+    font-family: var(--font-ui); font-size: 12px; font-weight: 600; letter-spacing: .3px;
+    margin-bottom: 2px; transition: background .1s;
+  }
+  .ctag:hover { background: rgba(255,255,255,.05); }
+  .ctag.active { background: rgba(255,255,255,.08); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .badge { margin-left: auto; background: var(--border); color: var(--muted); font-size: 9px; padding: 1px 5px; border-radius: 8px; }
+  .add-cap-btn {
+    width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--muted);
+    font-family: var(--font-ui); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 7px; cursor: pointer; border-radius: 2px; margin-top: 8px; transition: all .15s;
+  }
+  .add-cap-btn:hover { border-color: var(--white); color: var(--white); }
+  .stat-row { font-family: var(--font-ui); font-size: 12px; color: var(--muted); line-height: 2; }
+  .stat-val { color: var(--white); }
+
+  .cal-area { flex: 1; overflow: auto; padding: 18px 20px; }
+  .yr-label { font-family: var(--font-d); font-size: 44px; letter-spacing: 6px; color: rgba(255,255,255,.06); margin-bottom: 2px; user-select: none; }
+
+  .months-wrap { display: flex; flex-direction: column; gap: 24px; }
+  .month-card { background: var(--card); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+
+  .month-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; background: var(--dark); border-bottom: 2px solid var(--border);
+  }
+  .month-name { font-family: var(--font-d); font-size: 22px; letter-spacing: 3px; }
+  .season-pill {
+    font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 1px;
+  }
+
+  /* Artist Series section */
+  .artist-section { border-bottom: 2px solid #1a2a3a; }
+  .artist-section-hdr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: #080f18;
+  }
+  .artist-section-hdr span {
+    font-family: var(--font-ui); font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    color: #4fc3f7; text-transform: uppercase;
+  }
+  .artist-days-grid { display: grid; }
+
+  /* Thursday section */
+  .thu-section {}
+  .thu-section-hdr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: #0f0e00;
+  }
+  .thu-section-hdr span {
+    font-family: var(--font-ui); font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    color: var(--yellow); text-transform: uppercase;
+  }
+  .thu-col-header { display: grid; background: #0d0d00; border-bottom: 1px solid var(--border); }
+  .thu-col-hdr-cell {
+    font-family: var(--font-ui); font-size: 9px; letter-spacing: .8px; color: #888;
+    text-transform: uppercase; text-align: center; padding: 6px 4px;
+    border-right: 1px solid var(--border);
+  }
+  .thu-col-hdr-cell:last-child { border-right: none; }
+  .thu-col-hdr-cell.has-event { color: var(--yellow); }
+
+  /* Cap row */
+  .cap-row { display: grid; border-bottom: 1px solid var(--border); }
+  .cap-row:last-child { border-bottom: none; }
+  .cap-row-label {
+    background: #0d0d0d; border-right: 1px solid var(--border);
+    padding: 6px 8px; display: flex; align-items: center;
+  }
+  .cap-row-inner { border-left: 3px solid var(--border-color, #555); padding-left: 6px; }
+  .cap-row-name { font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+  .cap-row-sub { font-family: var(--font-ui); font-size: 8px; color: var(--muted); }
+
+  /* Day cells */
+  .day-cell {
+    border-right: 1px solid var(--border); padding: 5px;
+    min-height: 180px; position: relative; transition: background .1s;
+    vertical-align: top;
+  }
+  .day-cell:last-child { border-right: none; }
+  .day-cell.tue-cell { background: rgba(79,195,247,.025); cursor: pointer; }
+  .day-cell.tue-cell:hover { background: rgba(79,195,247,.06); }
+  .day-cell.thu-cell { background: rgba(245,197,24,.02); cursor: pointer; }
+  .day-cell.thu-cell:hover { background: rgba(245,197,24,.05); }
+  .day-cell.event-cell { outline: 1px solid rgba(255,255,255,.1); }
+  .day-cell.drag-over { background: rgba(200,16,46,.15) !important; outline: 1px dashed var(--red); }
+
+  .day-date {
+    font-family: var(--font-ui); font-size: 9px; color: #383838; margin-bottom: 4px;
+    letter-spacing: .3px; display: flex; align-items: center; gap: 4px;
+  }
+  .day-date.is-tue { color: #4fc3f7; }
+  .day-date.is-thu { color: #8a7800; }
+
+  .day-type-tag {
+    font-family: var(--font-ui); font-size: 7px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 1px 4px; border-radius: 1px;
+    margin-bottom: 4px; display: inline-block;
+  }
+
+  .special-event-banner {
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700; letter-spacing: .8px;
+    text-transform: uppercase; padding: 3px 6px; border-radius: 1px;
+    margin-bottom: 4px; text-align: center; line-height: 1.3;
+  }
+
+  .product-thumb {
+    background: #1a1a1a; border: 1px solid var(--border); border-radius: 3px;
+    padding: 3px; margin-bottom: 4px; position: relative; cursor: grab;
+    transition: transform .1s, border-color .1s;
+  }
+  .product-thumb:hover { transform: scale(1.02); border-color: #555; }
+  .product-thumb img { width: 100%; height: 160px; object-fit: contain; display: block; background: #111; border-radius: 2px; }
+  .pt-placeholder { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; font-size: 28px; background: #111; border-radius: 2px; }
+  .pt-name { font-family: var(--font-ui); font-size: 9px; font-weight: 600; color: #aaa; text-align: center; margin-top: 4px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .3px; }
+  .pt-remove {
+    position: absolute; top: 4px; right: 4px; width: 16px; height: 16px;
+    background: var(--red); border: none; border-radius: 50%; color: #fff;
+    font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1;
+  }
+  .product-thumb:hover .pt-remove { display: flex; }
+  .artist-badge {
+    position: absolute; top: 4px; left: 4px;
+    background: #4fc3f7; color: #000;
+    font-family: var(--font-ui); font-size: 7px; font-weight: 700;
+    padding: 1px 4px; border-radius: 1px;
+  }
+  .promo-badge {
+    position: absolute; top: 4px; left: 4px;
+    background: var(--pink); color: #fff;
+    font-family: var(--font-ui); font-size: 7px; font-weight: 700;
+    padding: 1px 4px; border-radius: 1px;
+  }
+
+  /* ── LIFECYCLE ── */
+  .lc-bar {
+    display: flex; align-items: center; gap: 2px;
+    background: #111; border-radius: 2px; padding: 3px 4px; margin-top: 2px;
+    border-top: 1px solid #222;
+  }
+  .lc-pip {
+    flex: 1; height: 4px; border-radius: 1px; background: #2a2a2a; transition: background .2s;
+  }
+  .lc-pip.on { background: #4caf50; }
+  .lc-pip.warn { background: #ff9800; }
+  .lc-pip.off { background: #2a2a2a; }
+
+  .lc-icons {
+    display: flex; align-items: center; gap: 3px; flex-wrap: wrap;
+    padding: 3px 4px; background: #111; border-top: 1px solid #1e1e1e;
+  }
+  .lc-icon {
+    font-size: 10px; line-height: 1; opacity: .25; transition: opacity .15s;
+    cursor: default; title: attr(title);
+  }
+  .lc-icon.active { opacity: 1; }
+
+  .lc-stage {
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700; letter-spacing: .6px;
+    text-transform: uppercase; padding: 2px 5px; border-radius: 1px; text-align: center;
+    margin-top: 2px;
+  }
+  .lc-stage.pre   { background: #1a1a1a; color: #444; border: 1px solid #2a2a2a; }
+  .lc-stage.sample { background: rgba(255,152,0,.12); color: #ff9800; border: 1px solid rgba(255,152,0,.25); }
+  .lc-stage.prod  { background: rgba(33,150,243,.1); color: #42a5f5; border: 1px solid rgba(33,150,243,.2); }
+  .lc-stage.inv   { background: rgba(76,175,80,.1); color: #66bb6a; border: 1px solid rgba(76,175,80,.2); }
+
+  .lc-units {
+    display: flex; gap: 4px; align-items: center; padding: 2px 4px;
+    font-family: var(--font-ui); font-size: 8px; color: #555;
+    border-top: 1px solid #1e1e1e;
+  }
+  .lc-units span { color: #888; font-weight: 700; }
+
+  .lc-sales-hot  { color: #ff5722; font-size: 11px; }
+  .lc-sales-cold { color: #42a5f5; font-size: 11px; }
+  .lc-sales-neu  { color: #444;    font-size: 11px; }
+
+  .lc-edit-btn {
+    width: 100%; background: transparent; border: 1px solid #1e1e1e; color: #333;
+    font-family: var(--font-ui); font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px; cursor: pointer; border-radius: 1px; transition: all .15s; margin-top: 2px;
+  }
+  .lc-edit-btn:hover { border-color: #444; color: #888; }
+
+  /* ── PRODUCT DETAIL LIGHTBOX ── */
+  .detail-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.93); z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px); padding: 20px;
+  }
+  .detail-overlay.hidden { display: none; }
+  .detail-modal {
+    background: #0e0e0e; border: 1px solid #222; border-radius: 4px;
+    width: 900px; max-width: 98vw; max-height: 92vh; overflow-y: auto;
+    display: grid; grid-template-columns: 1fr 1fr; position: relative;
+  }
+  .detail-img-side {
+    background: #080808; display: flex; align-items: center; justify-content: center;
+    padding: 30px; border-right: 1px solid #1a1a1a; min-height: 500px;
+    position: relative;
+  }
+  .detail-img-side img { max-width: 100%; max-height: 520px; object-fit: contain; border-radius: 3px; }
+  .detail-img-placeholder { font-size: 64px; opacity: .15; }
+  .detail-info-side { padding: 28px; display: flex; flex-direction: column; gap: 0; }
+  .detail-close {
+    position: absolute; top: 14px; right: 14px; width: 30px; height: 30px;
+    background: #1a1a1a; border: 1px solid #333; border-radius: 50%; color: #aaa;
+    font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 10; transition: all .15s;
+  }
+  .detail-close:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .detail-name {
+    font-family: var(--font-d); font-size: 26px; letter-spacing: 2px; line-height: 1.1;
+    color: #fff; margin-bottom: 4px;
+  }
+  .detail-cap-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-bottom: 16px;
+  }
+  .detail-section {
+    border-top: 1px solid #1a1a1a; padding: 14px 0;
+  }
+  .detail-section-title {
+    font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #444; margin-bottom: 10px;
+  }
+  .detail-check-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+  }
+  .detail-check {
+    background: #111; border: 1px solid #1e1e1e; border-radius: 3px;
+    padding: 10px 8px; text-align: center; transition: all .15s;
+  }
+  .detail-check.done { background: rgba(76,175,80,.1); border-color: rgba(76,175,80,.3); }
+  .detail-check-icon { font-size: 18px; margin-bottom: 4px; line-height: 1; }
+  .detail-check-label {
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700; letter-spacing: .8px;
+    text-transform: uppercase; color: #444;
+  }
+  .detail-check.done .detail-check-label { color: #66bb6a; }
+  .detail-stage-bar {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; margin-top: 2px;
+  }
+  .detail-stage-step {
+    padding: 7px 4px; border-radius: 2px; text-align: center;
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700; letter-spacing: .6px;
+    text-transform: uppercase; background: #111; color: #333; border: 1px solid #1e1e1e;
+    transition: all .15s;
+  }
+  .detail-stage-step.active.pre   { background: rgba(100,100,100,.15); color: #777; border-color: #444; }
+  .detail-stage-step.active.sample{ background: rgba(255,152,0,.12); color: #ff9800; border-color: rgba(255,152,0,.3); }
+  .detail-stage-step.active.prod  { background: rgba(33,150,243,.12); color: #42a5f5; border-color: rgba(33,150,243,.3); }
+  .detail-stage-step.active.inv   { background: rgba(76,175,80,.12); color: #66bb6a; border-color: rgba(76,175,80,.3); }
+  .detail-units-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 2px;
+  }
+  .detail-unit-box {
+    background: #111; border: 1px solid #1e1e1e; border-radius: 3px; padding: 12px 8px; text-align: center;
+  }
+  .detail-unit-val {
+    font-family: var(--font-d); font-size: 28px; letter-spacing: 1px; color: #fff; line-height: 1;
+  }
+  .detail-unit-label {
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #444; margin-top: 4px;
+  }
+  .detail-pct-bar {
+    height: 4px; background: #1e1e1e; border-radius: 2px; margin-top: 8px; overflow: hidden;
+  }
+  .detail-pct-fill { height: 100%; border-radius: 2px; transition: width .4s; }
+  .detail-sales-display {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: #111; border: 1px solid #1e1e1e; border-radius: 3px;
+  }
+  .detail-sales-icon { font-size: 32px; line-height: 1; }
+  .detail-sales-text { font-family: var(--font-d); font-size: 22px; letter-spacing: 2px; }
+  .detail-notes {
+    font-family: var(--font-b); font-size: 12px; color: #777; line-height: 1.6;
+    background: #080808; border: 1px solid #1a1a1a; border-radius: 3px;
+    padding: 10px 12px; margin-top: 2px;
+  }
+  .detail-actions {
+    display: flex; gap: 8px; margin-top: auto; padding-top: 16px; border-top: 1px solid #1a1a1a;
+  }
+  .lc-modal { background: var(--dark); border: 1px solid var(--border); border-top: 3px solid #4caf50;
+    width: 440px; max-width: 96vw; border-radius: 3px; }
+  .lc-section-hdr { font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #555; margin: 14px 0 8px; border-bottom: 1px solid #1e1e1e; padding-bottom: 4px; }
+  .lc-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .lc-toggle-label { font-family: var(--font-ui); font-size: 11px; color: #aaa; }
+  .lc-toggle {
+    position: relative; width: 36px; height: 18px; background: #222; border-radius: 9px;
+    cursor: pointer; border: 1px solid #333; transition: background .2s; flex-shrink: 0;
+  }
+  .lc-toggle.on { background: #2e7d32; border-color: #4caf50; }
+  .lc-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 12px; height: 12px; background: #555; border-radius: 50%; transition: all .2s;
+  }
+  .lc-toggle.on::after { left: 20px; background: #4caf50; }
+  .lc-num { width: 100%; background: #0d0d0d; border: 1px solid #222; color: #fff;
+    font-family: var(--font-b); font-size: 13px; padding: 7px 10px; border-radius: 2px; outline: none; }
+  .lc-num:focus { border-color: #4caf50; }
+  .lc-sales-btn { flex: 1; padding: 8px 4px; border: 1px solid #222; background: #0d0d0d;
+    color: #555; font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+    cursor: pointer; border-radius: 2px; transition: all .15s; text-align: center; }
+  .lc-sales-btn.sel-hot  { background: rgba(255,87,34,.15); border-color: #ff5722; color: #ff5722; }
+  .lc-sales-btn.sel-cold { background: rgba(66,165,245,.12); border-color: #42a5f5; color: #42a5f5; }
+  .lc-sales-btn.sel-neu  { background: rgba(255,255,255,.05); border-color: #555; color: #aaa; }
+
+  .add-btn {
+    width: 100%; background: transparent; border: 1px dashed #252525; color: #2e2e2e;
+    font-size: 18px; padding: 12px 5px; cursor: pointer; border-radius: 2px; transition: all .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .add-btn:hover { border-color: #555; color: #555; }
+
+  /* ── MULTI-CAD COMPACT STRIP ── */
+  .cad-stack { display: flex; flex-direction: column; gap: 3px; }
+  .cad-stack-hdr {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;
+  }
+  .cad-count-badge {
+    font-family: var(--font-ui); font-size: 8px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; color: #555;
+  }
+  .cad-expand-btn {
+    background: transparent; border: 1px solid #222; color: #444;
+    font-family: var(--font-ui); font-size: 7px; font-weight: 700;
+    letter-spacing: .8px; text-transform: uppercase; padding: 2px 6px;
+    border-radius: 1px; cursor: pointer; transition: all .15s;
+  }
+  .cad-expand-btn:hover { border-color: #555; color: #aaa; }
+  .cad-strip {
+    display: flex; align-items: center; gap: 7px;
+    background: #1a1a1a; border: 1px solid #222; border-radius: 3px;
+    padding: 4px 5px; cursor: pointer; position: relative;
+    transition: background .12s, border-color .12s;
+  }
+  .cad-strip:hover { background: #222; border-color: #444; }
+  .cad-strip-img {
+    width: 48px; height: 48px; object-fit: contain; background: #111;
+    border-radius: 2px; flex-shrink: 0;
+  }
+  .cad-strip-placeholder {
+    width: 48px; height: 48px; background: #111; border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .cad-strip-info { flex: 1; min-width: 0; }
+  .cad-strip-name {
+    font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+    color: #ccc; letter-spacing: .3px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+  }
+  .cad-strip-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .cad-strip-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: #252525; flex-shrink: 0;
+  }
+  .cad-strip-dot.on { background: #4caf50; }
+  .cad-strip-stage {
+    font-family: var(--font-ui); font-size: 7px; font-weight: 700;
+    letter-spacing: .5px; text-transform: uppercase;
+    padding: 1px 4px; border-radius: 1px; margin-left: 1px;
+  }
+  .cad-strip-sales { font-size: 12px; flex-shrink: 0; }
+  .cad-strip-units {
+    font-family: var(--font-ui); font-size: 7px; color: #444; margin-left: auto;
+  }
+  .cad-strip-rm {
+    position: absolute; top: 3px; right: 3px; width: 14px; height: 14px;
+    background: var(--red); border: none; border-radius: 50%; color: #fff;
+    font-size: 8px; cursor: pointer; display: none;
+    align-items: center; justify-content: center; line-height: 1; z-index:2;
+  }
+  .cad-strip:hover .cad-strip-rm { display: flex; }
+
+  /* ── MODALS ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.87); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+  .overlay.hidden { display: none; }
+  .modal { background: var(--dark); border: 1px solid var(--border); border-top: 3px solid var(--red); width: 620px; max-width: 96vw; max-height: 92vh; overflow-y: auto; border-radius: 3px; }
+  .modal.cap-modal { border-top-color: var(--yellow); }
+  .modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .modal-title { font-family: var(--font-d); font-size: 18px; letter-spacing: 2px; }
+  .modal-x { background: transparent; border: none; color: var(--muted); font-size: 18px; cursor: pointer; line-height: 1; }
+  .modal-x:hover { color: var(--white); }
+  .modal-body { padding: 18px; }
+  .modal-foot { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+  .fg { margin-bottom: 14px; }
+  .fl { display: block; font-family: var(--font-ui); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  .fi { width: 100%; background: var(--black); border: 1px solid var(--border); color: var(--white); font-family: var(--font-b); font-size: 13px; padding: 8px 11px; border-radius: 2px; outline: none; transition: border-color .15s; }
+  .fi:focus { border-color: var(--red); }
+  select.fi { cursor: pointer; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .drop-zone { border: 2px dashed var(--border); border-radius: 3px; padding: 22px; text-align: center; cursor: pointer; transition: all .15s; position: relative; }
+  .drop-zone:hover, .drop-zone.dz-active { border-color: var(--red); background: rgba(200,16,46,.04); }
+  .drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .dz-icon { font-size: 26px; margin-bottom: 6px; }
+  .dz-txt { font-family: var(--font-ui); font-size: 12px; color: var(--muted); }
+  .dz-sub { font-size: 10px; color: #333; margin-top: 3px; }
+
+  .preview-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-top: 12px; }
+  .pv-item { background: #0d0d0d; border: 1px solid var(--border); border-radius: 3px; padding: 8px; text-align: center; position: relative; }
+  .pv-item img { width: 100%; height: 160px; object-fit: contain; border-radius: 2px; background: #111; }
+  .pv-name { font-family: var(--font-ui); font-size: 10px; color: #aaa; margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: .3px; }
+  .pv-rm { position: absolute; top: 6px; right: 6px; background: var(--red); border: none; border-radius: 50%; width: 18px; height: 18px; color: #fff; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  .color-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .cswatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
+  .cswatch:hover { transform: scale(1.2); }
+  .cswatch.sel { border-color: var(--white); }
+
+  .share-bar { background: #0b200b; border: 1px solid var(--green); border-radius: 2px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .share-bar.hidden { display: none; }
+  .share-url { flex: 1; background: var(--black); border: 1px solid var(--border); color: var(--green); font-family: monospace; font-size: 12px; padding: 5px 9px; border-radius: 2px; }
+
+  .ctx { position: fixed; background: var(--dark); border: 1px solid var(--border); border-radius: 2px; padding: 3px 0; z-index: 300; min-width: 150px; box-shadow: 0 8px 24px rgba(0,0,0,.7); }
+  .ctx.hidden { display: none; }
+  .ctx-item { padding: 7px 13px; font-family: var(--font-ui); font-size: 12px; cursor: pointer; transition: background .1s; }
+  .ctx-item:hover { background: rgba(255,255,255,.07); }
+  .ctx-item.danger { color: var(--red); }
+  .ctx-div { height: 1px; background: var(--border); margin: 3px 0; }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Tuesday capsule controls */
+  .tue-upgrade-btn, .tue-meta-btn {
+    background: transparent; border: 1px solid #2a2a2a; border-radius: 2px;
+    color: #333; font-size: 10px; padding: 2px 5px; cursor: pointer;
+    font-family: var(--font-ui); font-weight: 700; transition: all .15s; line-height: 1.2;
+  }
+  .tue-upgrade-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
+  .tue-meta-btn { font-size: 9px; }
+  .tue-meta-btn:hover { opacity: .8; }
+  .tue-capsule { min-height: 200px !important; }
+
+  /* Slot selector */
+  .slot-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .slot-btn {
+    width: 36px; height: 36px; border-radius: 2px; border: 1px solid var(--border);
+    background: var(--black); color: var(--muted); font-family: var(--font-d);
+    font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .slot-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
+  .slot-btn.sel { background: #4fc3f7; color: #000; border-color: #4fc3f7; }
+  .slot-btn.slot-1 { border-color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">SULLEN <em>ART</em> COLLECTIVE</div>
+    <div class="header-sub">Release Calendar</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;margin-right:12px">
+    <span id="syncStatus" style="font-family:var(--font-ui);font-size:10px;letter-spacing:1px;color:#888">⟳ Loading…</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="showShare()">⬆ Share</button>
+    <button class="btn btn-ghost btn-sm" onclick="openCapModal()">+ Capsule</button>
+    <button class="btn btn-red btn-sm" onclick="openUploadModal(null)">Upload CADs</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <span class="tlabel">Season:</span>
+  <div class="chip chip-all active" onclick="setSeason('all',this)">All</div>
+  <div class="chip chip-sp" onclick="setSeason('spring',this)">Spring</div>
+  <div class="chip chip-su" onclick="setSeason('summer',this)">Summer</div>
+  <div class="chip chip-fa" onclick="setSeason('fall',this)">Fall</div>
+  <div class="chip chip-ho" onclick="setSeason('holiday',this)">Holiday</div>
+  <div class="tbar-divider"></div>
+  <span class="tlabel">Year:</span>
+  <div class="chip chip-all active" style="border-color:var(--white)" id="y2026" onclick="setYear(2026,this)">2026</div>
+  <div class="chip chip-all" id="y2027" onclick="setYear(2027,this)">2027</div>
+  <div class="tbar-divider"></div>
+  <span class="tlabel">View:</span>
+  <div class="chip chip-all active" id="vtype-all" onclick="setTypeView('all',this)">All</div>
+  <div class="chip" style="color:#4fc3f7" id="vtype-artist" onclick="setTypeView('artist',this)">Artist Series</div>
+  <div class="chip" style="color:var(--yellow)" id="vtype-capsule" onclick="setTypeView('capsule',this)">Capsules</div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sb-section">
+      <div class="sb-title">Capsules</div>
+      <div id="capList"></div>
+      <button class="add-cap-btn" onclick="openCapModal()">+ New Capsule</button>
+    </div>
+    <div class="sb-section">
+      <div class="sb-title">Legend</div>
+      <div style="font-family:var(--font-ui);font-size:11px;color:var(--muted);line-height:2.2">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#4fc3f7;border-radius:1px"></div> Artist Series — Every Tue</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:var(--yellow);border-radius:1px"></div> Capsule Drops — Thu</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#ff8c00;border-radius:1px"></div> Badge Series — Daily</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#00bcd4;border-radius:1px"></div> Cyber Week — Daily</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#6a8f5a;border-radius:1px"></div> Spring/Summer Acc.</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#8f6a3a;border-radius:1px"></div> Fall/Holiday Acc.</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;background:#555;border-radius:1px"></div> Core Delivery</div>
+      </div>
+    </div>
+    <div class="sb-section" style="flex:1">
+      <div class="sb-title">Stats</div>
+      <div class="stat-row">
+        Total SKUs: <span class="stat-val" id="st-skus">0</span><br>
+        Capsules: <span class="stat-val" id="st-caps">0</span><br>
+        Artist Drops: <span class="stat-val" style="color:#4fc3f7" id="st-art">0</span><br>
+        Thu Releases: <span class="stat-val" style="color:var(--yellow)" id="st-thu">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cal-area" id="calArea">
+    <div class="share-bar hidden" id="sharebar">
+      <span style="font-family:var(--font-ui);font-size:10px;letter-spacing:1px;color:var(--green);text-transform:uppercase">Share Link</span>
+      <input class="share-url" id="shareurl" value="https://releases.sullenclothing.com/2026" readonly onclick="this.select()">
+      <button class="btn btn-ghost btn-sm" onclick="copyShare()">Copy</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('sharebar').classList.add('hidden')">✕</button>
+    </div>
+    <div class="yr-label" id="yrLabel">2026</div>
+    <div class="months-wrap" id="monthsWrap"></div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="overlay hidden" id="uploadOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Upload CAD</div>
+      <button class="modal-x" onclick="closeUpload()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="fl">Product / Style Name</label>
+        <input class="fi" id="up-name" placeholder="e.g. Last Rites Reaper Tee" oninput="this.dataset.autoFilled=''">
+      </div>
+      <div class="grid2 fg">
+        <div>
+          <label class="fl">Capsule</label>
+          <select class="fi" id="up-cap" onchange="rebuildDates()"></select>
+        </div>
+        <div>
+          <label class="fl">Release Date</label>
+          <select class="fi" id="up-date"></select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Notes / Marketing Copy</label>
+        <textarea class="fi" id="up-notes" rows="2" placeholder="Colorways, price point, SKU notes, campaign angle..."></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">CAD Images</label>
+        <div class="drop-zone" id="dzone">
+          <input type="file" id="fileIn" accept="image/*" multiple onchange="onFileSelect(event)">
+          <div class="dz-icon">🖼</div>
+          <div class="dz-txt">Drop CAD images here or click to browse</div>
+          <div class="dz-sub">PNG, JPG, AI screenshot — multi-file OK</div>
+        </div>
+        <div class="preview-grid" id="pvGrid"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeUpload()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmUpload()">Add to Calendar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAPSULE MODAL -->
+<div class="overlay hidden" id="capOverlay">
+  <div class="modal cap-modal">
+    <div class="modal-hdr">
+      <div class="modal-title">New Capsule</div>
+      <button class="modal-x" onclick="document.getElementById('capOverlay').classList.add('hidden')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="fl">Capsule Name</label>
+        <input class="fi" id="cap-name" placeholder="e.g. Dark Waters, El Diablo, Reaper Club...">
+      </div>
+      <div class="grid2 fg">
+        <div>
+          <label class="fl">Season</label>
+          <select class="fi" id="cap-season">
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="fall">Fall</option>
+            <option value="holiday">Holiday</option>
+          </select>
+        </div>
+        <div>
+          <label class="fl">Type</label>
+          <select class="fi" id="cap-type">
+            <option value="capsule">Capsule Drop (Thu)</option>
+            <option value="artist">Artist Series (Tue)</option>
+            <option value="basic">Basic / Delivery</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Color Label</label>
+        <div class="color-row" id="colorRow">
+          <div class="cswatch sel" style="background:var(--red)" data-c="#c8102e" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--yellow)" data-c="#f5c518" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--green)" data-c="#2db84b" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--pink)" data-c="#e91e8c" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--blue)" data-c="#1565c0" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--orange)" data-c="#e65c00" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:var(--purple)" data-c="#7b2fbe" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:#4fc3f7" data-c="#4fc3f7" onclick="pickColor(this)"></div>
+          <div class="cswatch" style="background:#00838f" data-c="#00838f" onclick="pickColor(this)"></div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Concept Notes</label>
+        <textarea class="fi" id="cap-desc" rows="2" placeholder="Aesthetic direction, target customer, artist collab..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="document.getElementById('capOverlay').classList.add('hidden')">Cancel</button>
+      <button class="btn btn-red" onclick="createCap()">Create Capsule</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUESDAY CAPSULE META MODAL -->
+<div class="overlay hidden" id="tueMetaOverlay">
+  <div class="modal" style="border-top-color:#4fc3f7;width:420px">
+    <div class="modal-hdr">
+      <div class="modal-title" id="tueMetaTitle">Tuesday Drop</div>
+      <button class="modal-x" onclick="closeTueMeta()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-family:var(--font-ui);font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:12px" id="tueMetaDateLabel"></div>
+
+      <div class="fg">
+        <label class="fl">Drop Name <span style="color:#333;font-weight:400;text-transform:none">(leave blank for standard single tee)</span></label>
+        <input class="fi" id="tue-cap-name" placeholder="e.g. Angels, Sacred Heart, Friday the 13th...">
+      </div>
+
+      <div class="fg">
+        <label class="fl">Number of SKUs (1 = standard artist drop)</label>
+        <div class="slot-picker" id="slotPicker">
+          ${[1,2,3,4,5].map(n=>`<button class="slot-btn ${n===1?'sel slot-1':''}" data-slots="${n}" onclick="pickSlots(this)">${n}</button>`).join('')}
+        </div>
+        <div style="margin-top:8px;font-family:var(--font-ui);font-size:10px;color:var(--muted)">
+          <span id="slotHint">1 SKU = standard single artist tee</span>
+        </div>
+      </div>
+
+      <div class="fg" id="tueColorRow" style="display:none">
+        <label class="fl">Capsule Color</label>
+        <div class="color-row">
+          <div class="cswatch" style="background:#e8d5ff" data-c="#e8d5ff" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:#4fc3f7" data-c="#4fc3f7" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:var(--pink)" data-c="#e91e8c" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:var(--green)" data-c="#2db84b" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:var(--yellow)" data-c="#f5c518" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:var(--orange)" data-c="#e65c00" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:var(--red)" data-c="#c8102e" onclick="pickTueColor(this)"></div>
+          <div class="cswatch" style="background:#fff" data-c="#f0ede8" onclick="pickTueColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" style="justify-content:space-between">
+      <button class="btn btn-ghost btn-sm" onclick="clearTueMeta()" style="color:#c00">Reset to Standard</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeTueMeta()">Cancel</button>
+        <button class="btn btn-red" onclick="saveTueMeta()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ctx hidden" id="ctxMenu">
+  <div class="ctx-item" onclick="ctxDo('view')">👁 View Details</div>
+  <div class="ctx-item" onclick="ctxDo('edit')">✏ Edit Name</div>
+  <div class="ctx-div"></div>
+  <div class="ctx-item danger" onclick="ctxDo('remove')">✕ Remove</div>
+</div>
+
+<!-- PRODUCT DETAIL LIGHTBOX -->
+<div class="detail-overlay hidden" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-modal" onclick="event.stopPropagation()">
+    <button class="detail-close" onclick="closeDetailModal()">✕</button>
+
+    <!-- LEFT: Image -->
+    <div class="detail-img-side">
+      <img id="detail-img" src="" alt="" style="display:none">
+      <div class="detail-img-placeholder" id="detail-placeholder">👕</div>
+    </div>
+
+    <!-- RIGHT: Info -->
+    <div class="detail-info-side">
+      <div class="detail-name" id="detail-name"></div>
+      <div class="detail-cap-tag" id="detail-cap-tag"></div>
+
+      <!-- Creative Assets -->
+      <div class="detail-section">
+        <div class="detail-section-title">Creative Assets</div>
+        <div class="detail-check-grid">
+          <div class="detail-check" id="dc-sample">
+            <div class="detail-check-icon">📦</div>
+            <div class="detail-check-label">Sample</div>
+          </div>
+          <div class="detail-check" id="dc-studio">
+            <div class="detail-check-icon">📸</div>
+            <div class="detail-check-label">Studio Shot</div>
+          </div>
+          <div class="detail-check" id="dc-lifestyle">
+            <div class="detail-check-icon">🏄</div>
+            <div class="detail-check-label">Lifestyle</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Production Stage -->
+      <div class="detail-section">
+        <div class="detail-section-title">Production Stage</div>
+        <div class="detail-stage-bar">
+          <div class="detail-stage-step" id="ds-pre"    data-stage="pre">Pre-Prod</div>
+          <div class="detail-stage-step" id="ds-sample" data-stage="sample">Sample In</div>
+          <div class="detail-stage-step" id="ds-prod"   data-stage="prod">In Prod</div>
+          <div class="detail-stage-step" id="ds-inv"    data-stage="inv">In House</div>
+        </div>
+      </div>
+
+      <!-- Units -->
+      <div class="detail-section">
+        <div class="detail-section-title">Inventory</div>
+        <div class="detail-units-row">
+          <div class="detail-unit-box">
+            <div class="detail-unit-val" id="du-ordered">—</div>
+            <div class="detail-unit-label">Ordered</div>
+          </div>
+          <div class="detail-unit-box">
+            <div class="detail-unit-val" id="du-received">—</div>
+            <div class="detail-unit-label">Received</div>
+          </div>
+          <div class="detail-unit-box">
+            <div class="detail-unit-val" id="du-pct" style="font-size:22px">—</div>
+            <div class="detail-unit-label">Fill Rate</div>
+            <div class="detail-pct-bar"><div class="detail-pct-fill" id="du-pct-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sales -->
+      <div class="detail-section">
+        <div class="detail-section-title">Sales Performance</div>
+        <div class="detail-sales-display">
+          <div class="detail-sales-icon" id="ds-sales-icon">—</div>
+          <div class="detail-sales-text" id="ds-sales-text" style="color:#555">NOT SET</div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="detail-section" id="detail-notes-section">
+        <div class="detail-section-title">Notes</div>
+        <div class="detail-notes" id="detail-notes"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="detail-actions">
+        <button class="btn btn-ghost" style="flex:1" onclick="detailEditStatus()">✏ Update Status</button>
+        <button class="btn btn-red" onclick="closeDetailModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIFECYCLE MODAL -->
+<div class="overlay hidden" id="lcOverlay">
+  <div class="lc-modal">
+    <div class="modal-hdr" style="border-top:none">
+      <div>
+        <div class="modal-title" id="lcModalTitle">Product Status</div>
+        <div style="font-family:var(--font-ui);font-size:10px;color:#555;margin-top:2px" id="lcModalSub"></div>
+      </div>
+      <button class="modal-x" onclick="closeLcModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="lc-section-hdr">📸 Creative Assets</div>
+      <div class="lc-toggle-row">
+        <span class="lc-toggle-label">📦 Sample Received</span>
+        <div class="lc-toggle" id="lc-sample" onclick="lcToggle('sample')"></div>
+      </div>
+      <div class="lc-toggle-row">
+        <span class="lc-toggle-label">📸 Studio Shot</span>
+        <div class="lc-toggle" id="lc-studio" onclick="lcToggle('studio')"></div>
+      </div>
+      <div class="lc-toggle-row">
+        <span class="lc-toggle-label">🏄 Lifestyle Photos</span>
+        <div class="lc-toggle" id="lc-lifestyle" onclick="lcToggle('lifestyle')"></div>
+      </div>
+
+      <div class="lc-section-hdr">🏭 Production</div>
+      <div class="fg" style="margin-bottom:10px">
+        <label class="fl">Stage</label>
+        <select class="fi" id="lc-stage" style="background:#0d0d0d">
+          <option value="pre">Pre-Production</option>
+          <option value="sample">Sample In-House</option>
+          <option value="prod">In Production</option>
+          <option value="inv">In House</option>
+        </select>
+      </div>
+      <div class="grid2" style="gap:10px;margin-bottom:4px">
+        <div>
+          <label class="fl">Units Ordered</label>
+          <input class="lc-num" id="lc-ordered" type="number" min="0" placeholder="0">
+        </div>
+        <div>
+          <label class="fl">Units Received</label>
+          <input class="lc-num" id="lc-received" type="number" min="0" placeholder="0">
+        </div>
+      </div>
+
+      <div class="lc-section-hdr">📊 Sales Performance</div>
+      <div style="display:flex;gap:8px">
+        <button class="lc-sales-btn" id="lc-sales-hot"  onclick="lcSales('hot')" >🔥 Hot</button>
+        <button class="lc-sales-btn" id="lc-sales-neu"  onclick="lcSales('neu')" >— Neutral</button>
+        <button class="lc-sales-btn" id="lc-sales-cold" onclick="lcSales('cold')">❄️ Cold</button>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeLcModal()">Cancel</button>
+      <button class="btn" style="background:#2e7d32;color:#fff;border-color:#4caf50" onclick="saveLcModal()">Save Status</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ═══ FIREBASE ═══
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDd5VhYxpbfI2vptOA5UadZyghRzEO-HTI",
+  authDomain: "sullen-production-calendar.firebaseapp.com",
+  projectId: "sullen-production-calendar",
+  storageBucket: "sullen-production-calendar.firebasestorage.app",
+  messagingSenderId: "661548790602",
+  appId: "1:661548790602:web:d1cc402e5324b967b7c7b3"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db    = getFirestore(fbApp);
+const CAL_DOC = doc(db, 'calendar', 'main');
+
+// Save full S state to Firestore (debounced 800ms)
+let syncTimer = null;
+function syncToFirebase() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      await setDoc(CAL_DOC, {
+        products: S.products,
+        tueMeta:  S.tueMeta,
+        capsules: S.capsules,
+        year:     S.year,
+        updatedAt: Date.now(),
+      });
+    } catch(e) { console.error('Firebase save error:', e); }
+  }, 800);
+}
+
+// Show sync status in header
+function setSyncStatus(status) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const map = {
+    saving:  { text:'⟳ Saving…',  color:'#888' },
+    saved:   { text:'✓ Saved',     color:'#4caf50' },
+    live:    { text:'● Live',      color:'#4caf50' },
+    error:   { text:'✗ Sync error',color:'#f44336' },
+    loading: { text:'⟳ Loading…', color:'#888' },
+  };
+  const m = map[status] || map.live;
+  el.textContent = m.text; el.style.color = m.color;
+}
+function getDOWDates(year, month, dow) { // dow: 0=sun,1=mon,2=tue,4=thu
+  const dates = [];
+  const d = new Date(year, month, 1);
+  while (d.getDay() !== dow) d.setDate(d.getDate() + 1);
+  while (d.getMonth() === month) { dates.push(new Date(d)); d.setDate(d.getDate() + 7); }
+  return dates;
+}
+function getTuesdays(y, m) { return getDOWDates(y, m, 2); }
+function getThursdays(y, m) { return getDOWDates(y, m, 4); }
+
+function fmt(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function fmtLong(d) { return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+function dk(d) { return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+
+// ═══ HELPERS ═══
+function hexRgb(hex) {
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex, 16);
+  return `${(n>>16)&255},${(n>>8)&255},${n&255}`;
+}
+
+const TODAY = new Date();
+
+// ═══ DATA ═══
+const MONTHS = [
+  { name:'January',   s:'spring', m:0 },  { name:'February',  s:'spring', m:1 },
+  { name:'March',     s:'spring', m:2 },  { name:'April',     s:'spring', m:3 },
+  { name:'May',       s:'summer', m:4 },  { name:'June',      s:'summer', m:5 },
+  { name:'July',      s:'summer', m:6 },  { name:'August',    s:'summer', m:7 },
+  { name:'September', s:'fall',   m:8 },  { name:'October',   s:'fall',   m:9 },
+  { name:'November',  s:'holiday',m:10 }, { name:'December',  s:'holiday',m:11 },
+];
+
+const SEASON_STYLE = {
+  spring:{bg:'#f5c518',fg:'#000'}, summer:{bg:'#2db84b',fg:'#000'},
+  fall:{bg:'#e65c00',fg:'#fff'},   holiday:{bg:'#1565c0',fg:'#fff'},
+};
+
+let S = {
+  year: 2026,
+  seasonFilter: 'all',
+  typeView: 'all',
+  pickedColor: '#c8102e',
+  pendingFiles: [],
+  // key: dk(d)+'__'+capId => [{id,name,type,src,notes,isPromo}]
+  products: {},
+  // Special event pins: dk => { label, sublabel, color, textColor }
+  events: {},
+  // Tuesday capsule metadata: key => { name, color, maxSlots (1-5) }
+  // key same as products key: dk(d)+'__artist-series'
+  tueMeta: {
+    // Pre-seed: Feb 3rd Tuesday 2026 = Feb 17 = Angels capsule
+    // Feb Tuesdays 2026: Feb 3, 10, 17, 24 → 3rd = Feb 17
+  },
+  capsules: [
+    // months: [startMonth, endMonth] inclusive, 0=Jan…11=Dec. null = show all year.
+    // ── SPRING ──
+    { id:'traditions',    name:'Traditions',          color:'#f5c518', s:'spring',  type:'capsule', months:[0,0],  desc:'American Traditional — single Thu drop ~Jan 15' },
+    { id:'valentines',    name:"Valentine's",         color:'#e91e8c', s:'spring',  type:'capsule', months:[0,0],  desc:"Valentine's Day + Free Card Promo — last Thu Jan" },
+    { id:'rose',          name:'Rose',                color:'#ff6b9d', s:'spring',  type:'capsule', months:[1,1],  desc:'Feb Week 1 Thursday drop' },
+    { id:'cherubs',       name:'Cherubs',             color:'#ffb3c6', s:'spring',  type:'capsule', months:[1,1],  desc:'Feb Week 3 Thursday drop' },
+    { id:'st-paddys',     name:"St. Paddy's Day",     color:'#2db84b', s:'spring',  type:'capsule', months:[1,1],  desc:"Feb Week 4 Thu — St. Patrick's Day" },
+    { id:'badge-series',  name:'Badge Series',        color:'#ff8c00', s:'spring',  type:'special', months:[2,2],  desc:'Daily badge tee Mar 1–9' },
+    { id:'skate-day',     name:'World Skate Day',     color:'#00bcd4', s:'spring',  type:'capsule', months:[2,2],  desc:'World Skateboarding Day tee — March' },
+    { id:'easter',        name:'Easter',              color:'#b39ddb', s:'spring',  type:'capsule', months:[2,2],  desc:'Easter tees — 4th week of March (Thu)' },
+    { id:'artist-pack',   name:'Artist Series Pack',  color:'#f5c518', s:'spring',  type:'capsule', months:[2,2],  desc:'Small artist series pack — last Thu March' },
+    { id:'last-rites',    name:'Last Rites',          color:'#c8102e', s:'spring',  type:'capsule', months:[1,3],  desc:'Dark illustrative / blackwork — Feb–Apr' },
+    { id:'choloha',       name:'Choloha',             color:'#2db84b', s:'spring',  type:'capsule', months:[2,3],  desc:'Chicano-Hawaiian mashup — Mar–Apr' },
+    // ── SUMMER ──
+    { id:'dark-waters',   name:'Dark Waters',         color:'#00838f', s:'summer',  type:'capsule', months:[4,5],  desc:'Summer dark nautical — May–Jun' },
+    { id:'choloha-su',    name:'Choloha Summer',      color:'#e65c00', s:'summer',  type:'capsule', months:[4,5],  desc:'Summer Chicano-Hawaiian — May–Jun' },
+    { id:'fathers-day',   name:"Father's Day",        color:'#7b2fbe', s:'summer',  type:'capsule', months:[5,5],  desc:"Father's Day drop — June" },
+    { id:'rasta',         name:'Rasta',               color:'#e8b800', s:'summer',  type:'capsule', months:[6,6],  desc:'Rasta capsule — July ($99 bundle 4 tees)' },
+    { id:'vices',         name:'Vices',               color:'#e91e8c', s:'summer',  type:'capsule', months:[6,6],  desc:'Vices capsule — July Wk2–3, Thu–Fri multi-day drop' },
+    { id:'shark-week',    name:'Shark Week',          color:'#0077b6', s:'summer',  type:'capsule', months:[6,6],  desc:'Shark Week tee — July Wk3 + Wk4' },
+    { id:'daily-tee-ju',  name:'Daily Tee',           color:'#444',    s:'summer',  type:'capsule', months:[6,6],  desc:'Daily tee drops — July last week' },
+    { id:'death-of-summer',name:'Death of Summer',   color:'#1a1a2e', s:'summer',  type:'capsule', months:[7,7],  desc:'DI — Death of Summer large capsule — August' },
+    { id:'black-gold',    name:'Black & Gold',        color:'#c9a84c', s:'summer',  type:'capsule', months:[7,7],  desc:'Black and Gold capsule — August' },
+    // ── FALL ──
+    { id:'reapers',       name:'Reapers',             color:'#9e1a1a', s:'fall',    type:'capsule', months:[8,8],  desc:'Reapers capsule — Sep Wk2–4' },
+    { id:'pirate-day',    name:'Pirate Day',          color:'#2db84b', s:'fall',    type:'capsule', months:[8,8],  desc:'Pirate Day — last week Sep (green)' },
+    { id:'sulloween',     name:'Sulloween',           color:'#ff6a00', s:'fall',    type:'capsule', months:[9,9],  desc:'Sulloween — all 5 weeks of October' },
+    { id:'times-up',      name:"Time's Up",           color:'#c8102e', s:'fall',    type:'capsule', months:[9,9],  desc:"Time's Up capsule — October" },
+    { id:'day-of-dead',   name:'Day of the Dead',     color:'#c8102e', s:'fall',    type:'capsule', months:[9,9],  desc:'Day of the Dead — Oct (4 for $99)' },
+    { id:'nightmare',     name:'Nightmare',           color:'#2a0a4a', s:'fall',    type:'capsule', months:[9,9],  desc:'Nightmare — Oct last week (box sets, free sticker)' },
+    { id:'sulloween-fl',  name:'Sulloween Flannels',  color:'#8b4513', s:'fall',    type:'basic',   months:[9,9],  desc:'Sulloween Flannels — heavyweight/quilted/hooded' },
+    // ── HOLIDAY ──
+    { id:'tat-toons',     name:'Tat-Toons',           color:'#e8c84a', s:'holiday', type:'capsule', months:[10,10],desc:'Tat-Toons capsule — Nov Wk2–4 (blue/gold border)' },
+    { id:'trade-made',    name:'Trade Made',          color:'#c9a84c', s:'holiday', type:'capsule', months:[10,10],desc:'Trade Made — November' },
+    { id:'cyber-week',    name:'Cyber Week',          color:'#00bcd4', s:'holiday', type:'capsule', months:[10,11],desc:'Cyber Week — launches Nov 30, runs into December' },
+    { id:'end-of-year',   name:'End of Year',         color:'#b39ddb', s:'holiday', type:'capsule', months:[11,11],desc:'End of Year drop — December' },
+    // ── YEAR-ROUND ──
+    { id:'artist-series', name:'Artist Series',       color:'#4fc3f7', s:'all',     type:'artist',  months:null,   desc:'Every Tuesday — weekly artist collab drops' },
+    { id:'core-delivery', name:'Core Delivery',       color:'#555555', s:'all',     type:'basic',   months:null,   desc:'Core basics and delivery' },
+  ],
+};
+
+function initEvents() {
+  S.events = {};
+  const y = S.year;
+
+  // ── JANUARY ──
+  const janThus = getThursdays(y, 0);
+  const tradThu = janThus.find(d => d.getDate() >= 15) || janThus[1];
+  S.events[dk(tradThu)] = { capId:'traditions', label:'TRADITIONS DROP', sublabel:'American Traditional Launch', color:'#f5c518' };
+  const valThu = janThus[janThus.length - 1];
+  S.events[dk(valThu)] = { capId:'valentines', label:"VALENTINE'S DROP", sublabel:'🃏 Free Card Promo Launches', color:'#e91e8c' };
+
+  // ── FEBRUARY ──
+  const febThus = getThursdays(y, 1);
+  if (febThus[0]) S.events[dk(febThus[0])] = { capId:'rose',      label:'ROSE DROP',       sublabel:'Week 1 — Rose capsule',          color:'#ff6b9d' };
+  if (febThus[2]) S.events[dk(febThus[2])] = { capId:'cherubs',   label:'CHERUBS DROP',    sublabel:'Week 3 — Cherubs capsule',       color:'#ffb3c6' };
+  const stPThu = febThus[febThus.length - 1];
+  S.events[dk(stPThu)] = { capId:'st-paddys', label:"ST. PADDY'S", sublabel:"☘️ St. Patrick's Day capsule", color:'#2db84b' };
+
+  // ── FEBRUARY TUESDAY: Angels capsule (3rd Tue of Feb) ──
+  const febTues = getTuesdays(y, 1);
+  if (febTues[2]) {
+    const angelKey = dk(febTues[2]) + '__artist-series';
+    if (!S.tueMeta[angelKey]) S.tueMeta[angelKey] = { name:'Angels', color:'#e8d5ff', maxSlots:5 };
+  }
+
+  // ── MARCH ──
+  const marThus = getThursdays(y, 2);
+  // Badge Series Mar 1–9 daily
+  for (let day = 1; day <= 9; day++) {
+    const d = new Date(y, 2, day);
+    S.events[dk(d)] = { capId:'badge-series', label:`BADGE DAY ${day}`, sublabel:`Badge Tee #${day} of 9`, color:'#ff8c00', isBadge:true };
+  }
+  if (marThus[1]) S.events[dk(marThus[1])] = { capId:'skate-day',   label:'WORLD SKATE DAY', sublabel:'🛹 World Skateboarding Day Tee', color:'#00bcd4' };
+  const lastMarThu = marThus[marThus.length - 1];
+  S.events[dk(lastMarThu)] = { capId:'easter', label:'EASTER DROP', sublabel:'🐣 Easter tees', color:'#b39ddb',
+    secondary: { capId:'artist-pack', label:'ARTIST PACK', sublabel:'Small artist series pack', color:'#f5c518' }
+  };
+
+  // ── JULY ──
+  const julThus = getThursdays(y, 6);
+  const julTues = getTuesdays(y, 6);
+  // Shark Week: Wk3 Tuesday elevated
+  if (julTues[2]) {
+    const swKey = dk(julTues[2]) + '__artist-series';
+    if (!S.tueMeta[swKey]) S.tueMeta[swKey] = { name:'Shark Week', color:'#0077b6', maxSlots:3 };
+  }
+  // Vices: Wk2 Thu multi-day — pin Thu Wk2
+  if (julThus[1]) S.events[dk(julThus[1])] = { capId:'vices', label:'VICES DROP', sublabel:'Thu–Fri multi-day drop', color:'#e91e8c' };
+  // Rasta: Wk1 Thu ($99 bundle)
+  if (julThus[0]) S.events[dk(julThus[0])] = { capId:'rasta', label:'RASTA DROP', sublabel:'$99 Bundle — 4 Tees', color:'#e8b800' };
+
+  // ── AUGUST ──
+  const augThus = getThursdays(y, 7);
+  if (augThus[0]) S.events[dk(augThus[0])] = { capId:'death-of-summer', label:'DEATH OF SUMMER', sublabel:'DI — End of Summer capsule', color:'#1a1a2e' };
+  if (augThus[2]) S.events[dk(augThus[2])] = { capId:'black-gold', label:'BLACK & GOLD', sublabel:'Black and Gold capsule drop', color:'#c9a84c' };
+
+  // ── SEPTEMBER ──
+  const sepThus = getThursdays(y, 8);
+  if (sepThus[1]) S.events[dk(sepThus[1])] = { capId:'reapers', label:'REAPERS DROP', sublabel:'Reapers capsule launch — Wk2', color:'#9e1a1a' };
+  const lastSepThu = sepThus[sepThus.length - 1];
+  S.events[dk(lastSepThu)] = { capId:'pirate-day', label:'PIRATE DAY', sublabel:'🏴‍☠️ International Pirate Day', color:'#2db84b' };
+
+  // ── OCTOBER ──
+  const octThus = getThursdays(y, 9);
+  // Sulloween Kickoff: Wk1 — $19.99 promo
+  if (octThus[0]) S.events[dk(octThus[0])] = { capId:'sulloween', label:'SULLOWEEN KICKOFF', sublabel:'$19.99 Sulloween Kickoff', color:'#ff6a00' };
+  // Day of the Dead: Wk3 Thu (4 for $99)
+  if (octThus[2]) S.events[dk(octThus[2])] = { capId:'day-of-dead', label:'DAY OF THE DEAD', sublabel:'4 for $99 — Day of the Dead', color:'#c8102e' };
+  // Nightmare: last week of Oct
+  const lastOctThu = octThus[octThus.length - 1];
+  S.events[dk(lastOctThu)] = { capId:'nightmare', label:'NIGHTMARE', sublabel:'Box sets · Free sticker · Free nightmare box', color:'#2a0a4a' };
+
+  // ── NOVEMBER ──
+  const novThus = getThursdays(y, 10);
+  if (novThus[1]) S.events[dk(novThus[1])] = { capId:'tat-toons', label:'TAT-TOONS DROP', sublabel:'Tat-Toons capsule launch', color:'#e8c84a' };
+  // Black Friday: last Thu of Nov
+  const lastNovThu = novThus[novThus.length - 1];
+  S.events[dk(lastNovThu)] = { capId:'cyber-week', label:'BLACK FRIDAY', sublabel:'Black Friday Tee + Cyber Week Launches', color:'#00bcd4' };
+
+  // Nov 30: daily drops Mon–Fri that week
+  const nov30 = new Date(y, 10, 30);
+  // Find the Monday of that week
+  const nov30Day = nov30.getDay(); // 0=sun
+  const mondayOffset = nov30Day === 0 ? -6 : 1 - nov30Day;
+  const cyberMonday = new Date(nov30); cyberMonday.setDate(nov30.getDate() + mondayOffset);
+  ['Mon','Tue','Wed','Thu','Fri'].forEach((label, i) => {
+    const d = new Date(cyberMonday); d.setDate(cyberMonday.getDate() + i);
+    if (d.getMonth() === 10 || d.getMonth() === 11) { // Nov or Dec
+      S.events[dk(d)] = { capId:'cyber-week', label:`CYBER ${label.toUpperCase()}`, sublabel:`Cyber Week daily drop`, color:'#00bcd4', isCyber:true };
+    }
+  });
+
+  // ── DECEMBER ──
+  const decThus = getThursdays(y, 11);
+  if (decThus[0]) S.events[dk(decThus[0])] = { capId:'end-of-year', label:'END OF YEAR', sublabel:'End of Year capsule', color:'#b39ddb' };
+}
+
+initEvents();
+
+// ═══ RENDER ═══
+function render() {
+  renderSidebar(); renderCalendar(); updateStats();
+}
+
+function renderSidebar() {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // Build month groups: for each month, find capsules active that month
+  const groups = MONTHS.map(meta => {
+    const caps = S.capsules.filter(c => {
+      if (c.type === 'artist') return false; // show artist series separately at top
+      if (c.months === null) return false;   // year-round shown separately
+      return meta.m >= c.months[0] && meta.m <= c.months[1];
+    });
+    return { meta, caps };
+  }).filter(g => g.caps.length > 0);
+
+  // Year-round / always-on capsules
+  const yearRound = S.capsules.filter(c => c.months === null);
+
+  const sc = SEASON_STYLE;
+
+  const yearRoundHTML = yearRound.length ? `
+    <div style="margin-bottom:10px">
+      <div style="font-family:var(--font-ui);font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#444;padding:4px 0 5px;border-bottom:1px solid #1a1a1a;margin-bottom:5px">Year-Round</div>
+      ${yearRound.map(c => capTagHTML(c)).join('')}
+    </div>
+  ` : '';
+
+  const groupsHTML = groups.map(({ meta, caps }) => {
+    const style = sc[meta.s];
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid #1c1c1c">
+          <div style="width:6px;height:6px;border-radius:1px;background:${style.bg};flex-shrink:0"></div>
+          <span style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${style.bg}">${meta.name}</span>
+          <span style="font-family:var(--font-ui);font-size:8px;color:#333;margin-left:auto">${caps.length}</span>
+        </div>
+        ${caps.map(c => capTagHTML(c)).join('')}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('capList').innerHTML = yearRoundHTML + groupsHTML;
+}
+
+function capTagHTML(c) {
+  const count = countByCap(c.id);
+  return `
+    <div class="ctag">
+      <div class="dot" style="background:${c.color}"></div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${c.name}</span>
+      ${count > 0 ? `<span class="badge">${count}</span>` : ''}
+    </div>
+  `;
+}
+
+function countByCap(id) {
+  return Object.keys(S.products).filter(k=>k.endsWith('__'+id)).reduce((a,k)=>a+S.products[k].length,0);
+}
+
+function renderCalendar() {
+  const wrap = document.getElementById('monthsWrap');
+  const months = MONTHS.filter(m => S.seasonFilter==='all' || m.s===S.seasonFilter);
+  wrap.innerHTML = months.map(m => renderMonth(m)).join('');
+
+  wrap.querySelectorAll('.day-cell').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault(); cell.classList.remove('drag-over');
+      try { const d = JSON.parse(e.dataTransfer.getData('text/plain')); moveProduct(d.fk, d.pid, cell.dataset.key); } catch(e){}
+    });
+  });
+}
+
+function renderMonth(meta) {
+  const y = S.year;
+  const tuesdays = getTuesdays(y, meta.m);
+  const thursdays = getThursdays(y, meta.m);
+  const sc = SEASON_STYLE[meta.s];
+
+  const showArtist = S.typeView === 'all' || S.typeView === 'artist';
+  const showCaps   = S.typeView === 'all' || S.typeView === 'capsule';
+
+  // Capsule rows (thursday drops)
+  const capRows = S.capsules.filter(c => c.type !== 'artist');
+
+  return `
+    <div class="month-card">
+      <div class="month-hdr">
+        <div class="month-name">${meta.name} ${y}</div>
+        <div class="season-pill" style="background:${sc.bg};color:${sc.fg}">${meta.s.toUpperCase()}</div>
+      </div>
+
+      ${showArtist ? renderArtistSection(tuesdays) : ''}
+      ${meta.m === 2 && showCaps ? renderBadgeSeriesSection(y) : ''}
+      ${(meta.m === 10 || meta.m === 11) && showCaps ? renderCyberWeekSection(y, meta.m) : ''}
+      ${showCaps ? renderThursdaySection(thursdays, capRows, meta) : ''}
+      ${showCaps ? renderAccessoriesSection(meta, thursdays) : ''}
+    </div>
+  `;
+}
+
+// ─── ARTIST SERIES: one cell per Tuesday ───
+// Default = 1 tee. If a tueMeta exists for that date, it's an elevated capsule drop (up to 5).
+function renderArtistSection(tuesdays) {
+  const cols = tuesdays.length;
+  const cells = tuesdays.map(d => {
+    const key = dk(d) + '__artist-series';
+    const prods = S.products[key] || [];
+    const meta = S.tueMeta[key] || null;       // { name, color, maxSlots }
+    const isCapsule = meta && meta.maxSlots > 1;
+    const maxSlots = meta ? meta.maxSlots : 1;
+    const capName  = meta ? meta.name : null;
+    const capColor = meta ? meta.color : '#4fc3f7';
+    const slots    = maxSlots;
+    const filled   = prods.length;
+    const pct      = slots > 0 ? Math.round((filled/slots)*100) : 0;
+
+    // Capacity pip indicators
+    const pips = Array.from({length: slots}, (_,i) =>
+      `<div style="width:${Math.max(6,Math.floor(100/slots)-2)}%;height:4px;border-radius:1px;background:${i<filled ? capColor : '#2a2a2a'};flex-shrink:0"></div>`
+    ).join('');
+
+    return `
+      <div class="day-cell tue-cell ${isCapsule ? 'tue-capsule' : ''}" data-key="${key}"
+           style="${isCapsule ? `background:rgba(${hexRgb(capColor)},.06);outline:1px solid rgba(${hexRgb(capColor)},.3)` : ''}"
+           ondblclick="${filled < slots ? `openUploadModal('${key}')` : ''}"
+           oncontextmenu="showCtx(event,'${key}',null)">
+
+        <!-- Header row: date + controls -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:4px">
+          <div>
+            <div class="day-date is-tue" style="${isCapsule?`color:${capColor}`:''}">
+              ${isCapsule ? '⬡' : '🎨'} Tue ${fmt(d)}
+            </div>
+            ${isCapsule ? `<div style="font-family:var(--font-d);font-size:13px;letter-spacing:1.5px;color:${capColor};line-height:1.1;margin-top:1px">${capName}</div>` : ''}
+          </div>
+          <div style="display:flex;gap:3px;flex-shrink:0">
+            ${isCapsule ? `<button class="tue-meta-btn" style="border-color:${capColor};color:${capColor}" onclick="editTueMeta('${key}');event.stopPropagation()" title="Edit capsule name">✏</button>` : ''}
+            <button class="tue-upgrade-btn" onclick="openTueMetaModal('${key}');event.stopPropagation()" title="${isCapsule?'Edit slots':'Upgrade to capsule drop'}">
+              ${isCapsule ? `<span style="color:${capColor}">${filled}/${slots}</span>` : '<span style="color:#333">+</span>'}
+            </button>
+          </div>
+        </div>
+
+        <!-- Capacity bar -->
+        <div style="display:flex;gap:2px;margin-bottom:5px;align-items:center">${pips}</div>
+
+        ${isCapsule ? `<div style="font-family:var(--font-ui);font-size:8px;color:rgba(${hexRgb(capColor)},.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">TUE CAPSULE DROP · ${slots} SKUs</div>` : ''}
+
+        ${renderCellProducts(prods, key)}
+
+        ${filled < slots ? `<button class="add-btn" onclick="openUploadModal('${key}')">+</button>` : ''}
+        ${filled >= slots && slots > 1 ? `<div style="font-family:var(--font-ui);font-size:8px;color:var(--green);text-align:center;padding:3px">✓ Full</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="artist-section">
+      <div class="artist-section-hdr">
+        <div style="width:8px;height:8px;border-radius:50%;background:#4fc3f7;flex-shrink:0"></div>
+        <span>Artist Series — Every Tuesday</span>
+        <span style="font-size:9px;color:#2a5060;font-weight:400;letter-spacing:0">· 1 tee standard · up to 5 for capsule drops</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${cols},1fr)">${cells}</div>
+    </div>
+  `;
+}
+
+// ─── BADGE SERIES: Mar 1–9, one badge tee per day ───
+function renderBadgeSeriesSection(y) {
+  const days = Array.from({length:9}, (_,i) => new Date(y, 2, i+1)); // Mar 1–9
+  const cells = days.map(d => {
+    const key = dk(d) + '__badge-series';
+    const prods = S.products[key] || [];
+    const num = d.getDate();
+    const ev = S.events[dk(d)];
+    return `
+      <div class="day-cell" data-key="${key}"
+           style="background:rgba(255,140,0,.04);min-height:180px;cursor:pointer"
+           ondblclick="openUploadModal('${key}')"
+           oncontextmenu="showCtx(event,'${key}',null)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <div style="font-family:var(--font-d);font-size:15px;letter-spacing:1px;color:#ff8c00">Day ${num}</div>
+          <div style="font-family:var(--font-ui);font-size:8px;color:#553a00;letter-spacing:.5px">${fmt(d)}</div>
+        </div>
+        <div style="font-family:var(--font-ui);font-size:8px;color:rgba(255,140,0,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Badge Tee #${num}/9</div>
+        ${renderCellProducts(prods, key)}
+        <button class="add-btn" onclick="openUploadModal('${key}')">+</button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div style="border-bottom:2px solid #2a1a00">
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0f0800;border-bottom:1px solid #1f1000">
+        <div style="width:8px;height:8px;background:#ff8c00;border-radius:1px;flex-shrink:0"></div>
+        <span style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:2px;color:#ff8c00;text-transform:uppercase">Badge Series — Mar 1–9 · One Badge Tee Per Day</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(9,1fr);border-top:1px solid #1f1000">
+        ${cells}
+      </div>
+    </div>
+  `;
+}
+
+// ─── CYBER WEEK: Nov 30 week — Mon–Fri daily drops ───
+function renderCyberWeekSection(y, currentMonth) {
+  // Find the Mon–Fri of the Nov 30 week
+  const nov30 = new Date(y, 10, 30);
+  const nov30Day = nov30.getDay();
+  const mondayOffset = nov30Day === 0 ? -6 : 1 - nov30Day;
+  const monday = new Date(nov30); monday.setDate(nov30.getDate() + mondayOffset);
+
+  const weekDays = ['Mon','Tue','Wed','Thu','Fri'].map((label, i) => {
+    const d = new Date(monday); d.setDate(monday.getDate() + i);
+    return { d, label };
+  });
+
+  // Only show days that fall in currentMonth
+  const daysInMonth = weekDays.filter(({d}) => d.getMonth() === currentMonth);
+  if (!daysInMonth.length) return '';
+
+  const cells = daysInMonth.map(({d, label}) => {
+    const key = dk(d) + '__cyber-week';
+    const prods = S.products[key] || [];
+    return `
+      <div class="day-cell" data-key="${key}"
+           style="background:rgba(0,188,212,.04);min-height:180px;cursor:pointer"
+           ondblclick="openUploadModal('${key}')"
+           oncontextmenu="showCtx(event,'${key}',null)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <div style="font-family:var(--font-d);font-size:15px;letter-spacing:1px;color:#00bcd4">${label}</div>
+          <div style="font-family:var(--font-ui);font-size:8px;color:#004a52;letter-spacing:.5px">${fmt(d)}</div>
+        </div>
+        <div style="font-family:var(--font-ui);font-size:8px;color:rgba(0,188,212,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Cyber Drop</div>
+        ${renderCellProducts(prods, key)}
+        <button class="add-btn" onclick="openUploadModal('${key}')">+</button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div style="border-bottom:2px solid #002a30">
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:#040f10;border-bottom:1px solid #002a30">
+        <div style="width:8px;height:8px;background:#00bcd4;border-radius:1px;flex-shrink:0"></div>
+        <span style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:2px;color:#00bcd4;text-transform:uppercase">Cyber Week — Nov 30 · Daily Drops Mon–Fri</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${daysInMonth.length},1fr);border-top:1px solid #002a30">
+        ${cells}
+      </div>
+    </div>
+  `;
+}
+
+// ─── THURSDAY CAPSULES ───
+function renderThursdaySection(thursdays, capRows, meta) {
+  const cols = thursdays.length;
+
+  // Column headers
+  const hdrCols = thursdays.map(d => {
+    const ev = S.events[dk(d)];
+    const sec = ev && ev.secondary;
+    return `
+      <div class="thu-col-hdr-cell ${ev?'has-event':''}">
+        <div>Thu ${fmt(d)}</div>
+        ${ev ? `<div style="color:${ev.color};font-size:7px;margin-top:2px;font-weight:700;letter-spacing:.5px">${ev.label}</div>` : ''}
+        ${sec ? `<div style="color:${sec.color};font-size:7px;font-weight:700;letter-spacing:.5px">+ ${sec.label}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  const rows = capRows.map(cap => {
+    // Filter by explicit month range if set, otherwise fall back to season match
+    const inRange = cap.months === null
+      ? (cap.s === 'all' || cap.s === meta.s)
+      : (meta.m >= cap.months[0] && meta.m <= cap.months[1]);
+    if (!inRange) return '';
+
+    const cells = thursdays.map(d => {
+      const key = dk(d) + '__' + cap.id;
+      const prods = S.products[key] || [];
+      const ev = S.events[dk(d)];
+      const sec = ev && ev.secondary;
+      // Primary match: event belongs to this cap
+      const isOwnEvent = ev && ev.capId === cap.id;
+      // Secondary match: secondary event belongs to this cap
+      const isSecondary = sec && sec.capId === cap.id;
+      const anyMatch = isOwnEvent || isSecondary;
+      const matchEv = isOwnEvent ? ev : (isSecondary ? sec : null);
+
+      return `
+        <div class="day-cell thu-cell" data-key="${key}"
+             style="${anyMatch ? `background:rgba(${hexRgb(cap.color)},.07);outline:1px solid rgba(${hexRgb(cap.color)},.3)` : ''}"
+             ondblclick="openUploadModal('${key}')"
+             oncontextmenu="showCtx(event,'${key}',null)">
+          ${anyMatch && matchEv ? `
+            <div class="special-event-banner" style="background:rgba(${hexRgb(matchEv.color)},.18);color:${matchEv.color}">
+              ${matchEv.sublabel}
+            </div>` : ''}
+          ${renderCellProducts(prods, key)}
+          <button class="add-btn" onclick="openUploadModal('${key}')">+</button>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="cap-row" style="grid-template-columns:110px repeat(${cols},1fr)">
+        <div class="cap-row-label">
+          <div class="cap-row-inner" style="--border-color:${cap.color}">
+            <div class="cap-row-name" style="color:${cap.color}">${cap.name}</div>
+            <div class="cap-row-sub">${cap.type==='basic'?'DELIVERY':'THU DROP'}</div>
+          </div>
+        </div>
+        ${cells}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="thu-section">
+      <div class="thu-section-hdr">
+        <div style="width:8px;height:8px;border-radius:1px;background:var(--yellow);flex-shrink:0"></div>
+        <span>Capsule Drops — Thursdays</span>
+      </div>
+      <div class="thu-col-header" style="grid-template-columns:110px repeat(${cols},1fr)">
+        <div class="thu-col-hdr-cell" style="text-align:left;padding-left:8px">Capsule</div>
+        ${hdrCols}
+      </div>
+      ${rows || '<div style="padding:14px 12px;color:#333;font-family:var(--font-ui);font-size:11px">No capsules assigned to this season.</div>'}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════
+//  ACCESSORIES
+// ═══════════════════════════════════════════
+
+// Categories per season group — months 0–3 = spring, 4–7 = summer, 8–9 = fall, 10–11 = holiday
+const ACC_CATEGORIES = {
+  spring: [
+    { id:'hats-sp',    name:'Hats',      icon:'🧢', color:'#a0522d' },
+    { id:'boxers-sp',  name:'Boxers',    icon:'🩲', color:'#5b8dd9' },
+    { id:'tanks-sp',   name:'Tanks',     icon:'👕', color:'#888' },
+    { id:'swimwear',   name:'Swimwear',  icon:'🩱', color:'#00838f' },
+    { id:'lanyards-sp',name:'Lanyards',  icon:'🏷', color:'#9c6ade' },
+  ],
+  summer: [
+    { id:'hats-su',    name:'Hats',      icon:'🧢', color:'#a0522d' },
+    { id:'boxers-su',  name:'Boxers',    icon:'🩲', color:'#5b8dd9' },
+    { id:'tanks-su',   name:'Tanks',     icon:'👕', color:'#888' },
+    { id:'swimwear-su',name:'Swimwear',  icon:'🩱', color:'#00838f' },
+    { id:'lanyards-su',name:'Lanyards',  icon:'🏷', color:'#9c6ade' },
+  ],
+  fall: [
+    { id:'hats-fa',    name:'Hats',      icon:'🧢', color:'#a0522d' },
+    { id:'boxers-fa',  name:'Boxers',    icon:'🩲', color:'#5b8dd9' },
+    { id:'lanyards-fa',name:'Lanyards',  icon:'🏷', color:'#9c6ade' },
+    { id:'fleece',     name:'Fleece',    icon:'🧥', color:'#6d4c41' },
+    { id:'bottoms',    name:'Bottoms',   icon:'👖', color:'#546e7a' },
+    { id:'outerwear',  name:'Outerwear', icon:'🧣', color:'#37474f' },
+  ],
+  holiday: [
+    { id:'hats-ho',    name:'Hats',      icon:'🧢', color:'#a0522d' },
+    { id:'boxers-ho',  name:'Boxers',    icon:'🩲', color:'#5b8dd9' },
+    { id:'lanyards-ho',name:'Lanyards',  icon:'🏷', color:'#9c6ade' },
+    { id:'fleece-ho',  name:'Fleece',    icon:'🧥', color:'#6d4c41' },
+    { id:'bottoms-ho', name:'Bottoms',   icon:'👖', color:'#546e7a' },
+    { id:'outerwear-ho',name:'Outerwear',icon:'🧣', color:'#37474f' },
+  ],
+};
+
+function seasonGroup(monthIdx) {
+  if (monthIdx <= 3) return 'spring';
+  if (monthIdx <= 7) return 'summer';
+  if (monthIdx <= 9) return 'fall';
+  return 'holiday';
+}
+
+function renderAccessoriesSection(meta, thursdays) {
+  const group = seasonGroup(meta.m);
+  const cats = ACC_CATEGORIES[group];
+  if (!cats) return '';
+
+  const cols = thursdays.length;
+  const sectionBg = { spring:'#0a0e08', summer:'#080e0e', fall:'#0e0a06', holiday:'#08080e' }[group];
+  const sectionColor = { spring:'#6a8f5a', summer:'#4a8f8a', fall:'#8f6a3a', holiday:'#6a5a8f' }[group];
+
+  const rows = cats.map(cat => {
+    // One cell per Thursday (same cadence as capsule rows)
+    const cells = thursdays.map((d, wi) => {
+      const key = `acc__${meta.m}__${cat.id}__wk${wi+1}`;
+      const prods = S.products[key] || [];
+      return `
+        <div class="day-cell" data-key="${key}"
+             style="background:rgba(${hexRgb(cat.color)},.03);min-height:180px;cursor:pointer"
+             ondblclick="openUploadModal('${key}')"
+             oncontextmenu="showCtx(event,'${key}',null)">
+          ${renderCellProducts(prods, key)}
+          <button class="add-btn" onclick="openUploadModal('${key}')">+</button>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div style="display:grid;grid-template-columns:110px repeat(${cols},1fr);border-bottom:1px solid #1a1a1a">
+        <div style="background:#0c0c0c;border-right:1px solid #1a1a1a;padding:6px 8px;display:flex;align-items:center">
+          <div style="border-left:3px solid ${cat.color};padding-left:7px">
+            <div style="font-size:14px;line-height:1;margin-bottom:2px">${cat.icon}</div>
+            <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${cat.color}">${cat.name}</div>
+          </div>
+        </div>
+        ${cells}
+      </div>
+    `;
+  }).join('');
+
+  // Week header (reuse Thursday dates as delivery windows)
+  const hdr = thursdays.map(d => `
+    <div style="font-family:var(--font-ui);font-size:9px;color:#383838;text-align:center;padding:5px 3px;border-right:1px solid #1a1a1a">
+      Wk ${fmt(d)}
+    </div>`).join('');
+
+  return `
+    <div style="border-top:2px solid #1a1a1a">
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:${sectionBg};border-bottom:1px solid #1a1a1a">
+        <div style="width:8px;height:8px;background:${sectionColor};border-radius:1px;flex-shrink:0"></div>
+        <span style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:2px;color:${sectionColor};text-transform:uppercase">
+          ${group.charAt(0).toUpperCase()+group.slice(1)} Accessories & Non-Tee
+        </span>
+      </div>
+      <div style="display:grid;grid-template-columns:110px repeat(${cols},1fr);background:#0c0c0c;border-bottom:1px solid #1a1a1a">
+        <div style="font-family:var(--font-ui);font-size:9px;color:#333;padding:5px 8px;border-right:1px solid #1a1a1a">Category</div>
+        ${hdr}
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+// ─── Cell product renderer — single card or compact stack ───
+// Track which cells are expanded by the user
+const expandedCells = new Set();
+
+function renderCellProducts(prods, key) {
+  if (prods.length === 0) return '';
+  if (prods.length === 1) return thumbHTML(prods[0], key);
+
+  const isExpanded = expandedCells.has(key);
+  if (isExpanded) {
+    return `
+      <div class="cad-stack">
+        <div class="cad-stack-hdr">
+          <span class="cad-count-badge">${prods.length} CADs</span>
+          <button class="cad-expand-btn" onclick="toggleExpand('${key}',event)">▲ Collapse</button>
+        </div>
+        ${prods.map(p => thumbHTML(p, key)).join('')}
+      </div>`;
+  }
+
+  // Compact strip view
+  const strips = prods.map(p => cadStripHTML(p, key)).join('');
+  return `
+    <div class="cad-stack">
+      <div class="cad-stack-hdr">
+        <span class="cad-count-badge">${prods.length} CADs</span>
+        <button class="cad-expand-btn" onclick="toggleExpand('${key}',event)">▼ Expand All</button>
+      </div>
+      ${strips}
+    </div>`;
+}
+
+function toggleExpand(key, e) {
+  e.stopPropagation();
+  if (expandedCells.has(key)) expandedCells.delete(key);
+  else expandedCells.add(key);
+  render();
+}
+
+function cadStripHTML(p, key) {
+  const lc = p.lc || {};
+  const stage = lc.stage || 'pre';
+  const stageLabels = { pre:'PRE', sample:'SMPL', prod:'PROD', inv:'IN HOUSE' };
+  const stageCols   = { pre:'#444', sample:'#ff9800', prod:'#42a5f5', inv:'#4caf50' };
+  const salesIcon   = { hot:'🔥', cold:'❄️', neu:'—' }[lc.sales || 'neu'];
+
+  // 3 status dots: sample, studio, lifestyle
+  const dots = ['sample','studio','lifestyle'].map(k =>
+    `<div class="cad-strip-dot ${lc[k] ? 'on' : ''}" title="${k}"></div>`
+  ).join('');
+
+  const img = p.src
+    ? `<img class="cad-strip-img" src="${p.src}" alt="${p.name}" draggable="false">`
+    : `<div class="cad-strip-placeholder">${p.type==='artist'?'🎨':p.type==='accessory'?'📦':'👕'}</div>`;
+
+  const unitsStr = (lc.ordered != null)
+    ? `${lc.received ?? 0}/${lc.ordered}`
+    : '';
+
+  return `
+    <div class="cad-strip" onclick="openDetail('${key}','${p.id}')"
+         draggable="true" ondragstart="startDrag(event,'${key}','${p.id}')"
+         oncontextmenu="showCtx(event,'${key}','${p.id}')">
+      ${img}
+      <div class="cad-strip-info">
+        <div class="cad-strip-name">${p.name}</div>
+        <div class="cad-strip-row">
+          ${dots}
+          <span class="cad-strip-stage" style="background:rgba(${hexRgb(stageCols[stage])},.12);color:${stageCols[stage]};border:1px solid rgba(${hexRgb(stageCols[stage])},.25)">${stageLabels[stage]}</span>
+          <span class="cad-strip-sales">${salesIcon}</span>
+          ${unitsStr ? `<span class="cad-strip-units">${unitsStr}</span>` : ''}
+        </div>
+      </div>
+      <button class="cad-strip-rm" onclick="event.stopPropagation();removeProduct('${key}','${p.id}')">✕</button>
+    </div>`;
+}
+
+function thumbHTML(p, key) {
+  const lc = p.lc || {};
+  // ── Photo checklist icons
+  const icons = [
+    { key:'sample',    icon:'📦', label:'Sample' },
+    { key:'studio',    icon:'📸', label:'Studio Shot' },
+    { key:'lifestyle', icon:'🏄', label:'Lifestyle Photos' },
+  ];
+  const iconRow = icons.map(i =>
+    `<span class="lc-icon ${lc[i.key] ? 'active' : ''}" title="${i.label}">${i.icon}</span>`
+  ).join('');
+
+  // ── Production stage pill
+  const stages = { pre:'PRE-PROD', sample:'SAMPLE IN', prod:'IN PROD', inv:'IN HOUSE' };
+  const stageCls = { pre:'pre', sample:'sample', prod:'prod', inv:'inv' };
+  const stage = lc.stage || 'pre';
+  const stageHTML = `<div class="lc-stage ${stageCls[stage]}">${stages[stage] || 'PRE-PROD'}</div>`;
+
+  // ── Units
+  const ordered  = lc.ordered  != null ? lc.ordered  : '—';
+  const received = lc.received != null ? lc.received : '—';
+  const pct = (lc.ordered && lc.received) ? Math.round((lc.received/lc.ordered)*100) : null;
+  const unitsHTML = `
+    <div class="lc-units">
+      <span title="Units Ordered">ORD</span>${ordered}
+      <span style="color:#333;margin:0 1px">/</span>
+      <span title="Units Received">RCV</span>${received}
+      ${pct != null ? `<span style="margin-left:auto;color:${pct>=100?'#66bb6a':pct>=50?'#ff9800':'#f44336'}">${pct}%</span>` : ''}
+    </div>`;
+
+  // ── Sales performance
+  const salesMap = { hot:'🔥', cold:'❄️', neu:'—' };
+  const salesCls = { hot:'lc-sales-hot', cold:'lc-sales-cold', neu:'lc-sales-neu' };
+  const sales = lc.sales || 'neu';
+  const salesHTML = `<span class="${salesCls[sales]}" title="Sales: ${sales}">${salesMap[sales]}</span>`;
+
+  // ── Progress bar (photo pipeline: 3 pips)
+  const pipHTML = icons.map(i =>
+    `<div class="lc-pip ${lc[i.key] ? 'on' : 'off'}"></div>`
+  ).join('');
+
+  const img = p.src
+    ? `<img src="${p.src}" alt="${p.name}" draggable="false" onclick="openDetail('${key}','${p.id}')" style="cursor:zoom-in">`
+    : `<div class="pt-placeholder" onclick="openDetail('${key}','${p.id}')" style="cursor:zoom-in">${p.type==='artist'?'🎨':p.type==='accessory'?'📦':p.type==='basic'?'📦':'👕'}</div>`;
+
+  return `
+    <div class="product-thumb" draggable="true"
+         ondragstart="startDrag(event,'${key}','${p.id}')"
+         oncontextmenu="showCtx(event,'${key}','${p.id}')">
+      ${p.type==='artist' ? '<div class="artist-badge">ARTIST</div>' : ''}
+      ${p.isPromo ? '<div class="promo-badge">PROMO</div>' : ''}
+      ${img}
+      <div class="pt-name">${p.name}</div>
+
+      <!-- lifecycle quick-view -->
+      <div class="lc-bar">${pipHTML}
+        <div style="margin-left:auto;padding-left:4px">${salesHTML}</div>
+      </div>
+      <div class="lc-icons">${iconRow}
+        <div style="margin-left:auto">${stageHTML}</div>
+      </div>
+      ${unitsHTML}
+
+      <button class="lc-edit-btn" onclick="openLcModal('${key}','${p.id}')">✏ Update Status</button>
+      <button class="pt-remove" onclick="removeProduct('${key}','${p.id}')">✕</button>
+    </div>
+  `;
+}
+
+// ═══ UPLOAD ═══
+let uploadPreKey = null;
+
+function openUploadModal(preKey) {
+  uploadPreKey = preKey;
+  S.pendingFiles = [];
+  document.getElementById('pvGrid').innerHTML = '';
+  document.getElementById('up-name').value = '';
+  document.getElementById('up-name').dataset.autoFilled = '';
+  document.getElementById('up-notes').value = '';
+
+  const capSel = document.getElementById('up-cap');
+  // Build options: capsules + accessory categories
+  const accOpts = Object.values(ACC_CATEGORIES).flat()
+    .filter((c,i,a) => a.findIndex(x=>x.id===c.id)===i)
+    .map(c => `<option value="${c.id}">${c.icon} ${c.name} (accessory)</option>`).join('');
+  capSel.innerHTML = S.capsules.map(c=>`<option value="${c.id}">${c.name}</option>`).join('') + accOpts;
+
+  const isAcc = preKey && preKey.startsWith('acc__');
+
+  if (preKey) {
+    if (isAcc) {
+      // acc__monthIdx__catId__wkN
+      const parts = preKey.split('__');
+      const catId = parts[2];
+      [...capSel.options].forEach(o => { if(o.value===catId) o.selected=true; });
+      buildDates(catId, preKey);
+    } else {
+      const [datePart, capId] = preKey.split('__');
+      [...capSel.options].forEach(o => { if(o.value===capId) o.selected=true; });
+      buildDates(capId, datePart);
+    }
+  } else {
+    buildDates(capSel.value, null);
+  }
+
+  document.getElementById('uploadOverlay').classList.remove('hidden');
+}
+
+function rebuildDates() {
+  buildDates(document.getElementById('up-cap').value, null);
+}
+
+function buildDates(capId, selectDk) {
+  const cap = S.capsules.find(c=>c.id===capId);
+  const isAcc = capId && capId.startsWith('acc__');
+  const isTue = cap && cap.type==='artist';
+  const sel = document.getElementById('up-date');
+  sel.innerHTML = '';
+
+  if (isAcc) {
+    // Accessory key format: acc__monthIdx__catId__wkN
+    // Just add one option matching the preKey
+    if (selectDk) {
+      const opt = document.createElement('option');
+      opt.value = selectDk; opt.textContent = 'Selected week'; opt.selected = true;
+      sel.appendChild(opt);
+    }
+    return;
+  }
+
+  MONTHS.forEach(meta => {
+    const dates = isTue ? getTuesdays(S.year, meta.m) : getThursdays(S.year, meta.m);
+    dates.forEach(d => {
+      const key = dk(d) + '__' + capId;
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = (isTue?'Tue ':'Thu ') + fmtLong(d);
+      if (selectDk && dk(d) === selectDk) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function closeUpload() { document.getElementById('uploadOverlay').classList.add('hidden'); }
+
+// ═══ PRODUCT DETAIL LIGHTBOX ═══
+let detailKey = null, detailPid = null;
+
+function openDetail(key, pid) {
+  detailKey = key; detailPid = pid;
+  const p = (S.products[key] || []).find(x => x.id === pid);
+  if (!p) return;
+  const lc = p.lc || {};
+
+  // Image
+  const img = document.getElementById('detail-img');
+  const ph  = document.getElementById('detail-placeholder');
+  if (p.src) { img.src = p.src; img.style.display = 'block'; ph.style.display = 'none'; }
+  else        { img.style.display = 'none'; ph.style.display = 'block';
+                ph.textContent = p.type === 'artist' ? '🎨' : p.type === 'accessory' ? '📦' : '👕'; }
+
+  // Name + capsule tag
+  document.getElementById('detail-name').textContent = p.name;
+  // Derive capsule from key
+  const capId = key.split('__').slice(1).join('__');
+  const cap = S.capsules.find(c => c.id === capId);
+  const tag = document.getElementById('detail-cap-tag');
+  if (cap) {
+    tag.textContent = cap.name;
+    tag.style.background = `rgba(${hexRgb(cap.color)},.15)`;
+    tag.style.color = cap.color;
+    tag.style.border = `1px solid rgba(${hexRgb(cap.color)},.3)`;
+  } else {
+    tag.textContent = capId.replace(/__/g,' · ');
+    tag.style.cssText = 'background:#111;color:#555;border:1px solid #222';
+  }
+
+  // Creative asset checks
+  ['sample','studio','lifestyle'].forEach(k => {
+    document.getElementById('dc-' + k).classList.toggle('done', !!lc[k]);
+  });
+
+  // Production stage steps
+  const stage = lc.stage || 'pre';
+  const stageOrder = ['pre','sample','prod','inv'];
+  const stageIdx = stageOrder.indexOf(stage);
+  stageOrder.forEach((s, i) => {
+    const el = document.getElementById('ds-' + s);
+    el.classList.remove('active', 'pre', 'sample', 'prod', 'inv');
+    if (i <= stageIdx) { el.classList.add('active', s); }
+  });
+
+  // Units
+  const ord = lc.ordered  != null ? lc.ordered  : null;
+  const rcv = lc.received != null ? lc.received : null;
+  const pct = (ord && rcv) ? Math.round((rcv / ord) * 100) : null;
+  document.getElementById('du-ordered').textContent  = ord != null ? ord.toLocaleString() : '—';
+  document.getElementById('du-received').textContent = rcv != null ? rcv.toLocaleString() : '—';
+  document.getElementById('du-pct').textContent      = pct != null ? pct + '%' : '—';
+  document.getElementById('du-pct').style.color      = pct == null ? '#555' : pct >= 100 ? '#66bb6a' : pct >= 50 ? '#ff9800' : '#f44336';
+  const bar = document.getElementById('du-pct-bar');
+  bar.style.width = pct != null ? Math.min(pct, 100) + '%' : '0%';
+  bar.style.background = pct == null ? '#333' : pct >= 100 ? '#4caf50' : pct >= 50 ? '#ff9800' : '#f44336';
+
+  // Sales
+  const salesData = {
+    hot:  { icon:'🔥', text:'HOT',     color:'#ff5722' },
+    cold: { icon:'❄️', text:'COLD',    color:'#42a5f5' },
+    neu:  { icon:'—',  text:'NEUTRAL', color:'#555'    },
+  };
+  const sd = salesData[lc.sales || 'neu'];
+  document.getElementById('ds-sales-icon').textContent = sd.icon;
+  document.getElementById('ds-sales-text').textContent = sd.text;
+  document.getElementById('ds-sales-text').style.color = sd.color;
+
+  // Notes
+  const notesSection = document.getElementById('detail-notes-section');
+  const notesEl = document.getElementById('detail-notes');
+  if (p.notes) { notesEl.textContent = p.notes; notesSection.style.display = 'block'; }
+  else { notesSection.style.display = 'none'; }
+
+  document.getElementById('detailOverlay').classList.remove('hidden');
+}
+
+function closeDetail(e) {
+  if (e.target === document.getElementById('detailOverlay')) closeDetailModal();
+}
+function closeDetailModal() {
+  document.getElementById('detailOverlay').classList.add('hidden');
+}
+function detailEditStatus() {
+  closeDetailModal();
+  if (detailKey && detailPid) openLcModal(detailKey, detailPid);
+}
+
+// ═══ LIFECYCLE MODAL ═══
+let lcKey = null, lcPid = null, lcState = {};
+
+function openLcModal(key, pid) {
+  lcKey = key; lcPid = pid;
+  const p = (S.products[key] || []).find(x => x.id === pid);
+  if (!p) return;
+
+  lcState = JSON.parse(JSON.stringify(p.lc || {}));
+
+  document.getElementById('lcModalTitle').textContent = p.name;
+  document.getElementById('lcModalSub').textContent = key.replace('__', ' · ').replace('__', ' · ');
+
+  // Toggles
+  ['sample','studio','lifestyle'].forEach(k => {
+    const el = document.getElementById('lc-' + k);
+    el.classList.toggle('on', !!lcState[k]);
+  });
+
+  // Stage
+  document.getElementById('lc-stage').value = lcState.stage || 'pre';
+
+  // Units
+  document.getElementById('lc-ordered').value  = lcState.ordered  != null ? lcState.ordered  : '';
+  document.getElementById('lc-received').value = lcState.received != null ? lcState.received : '';
+
+  // Sales
+  lcSalesUI(lcState.sales || 'neu');
+
+  document.getElementById('lcOverlay').classList.remove('hidden');
+}
+
+function closeLcModal() { document.getElementById('lcOverlay').classList.add('hidden'); }
+
+function lcToggle(key) {
+  lcState[key] = !lcState[key];
+  document.getElementById('lc-' + key).classList.toggle('on', !!lcState[key]);
+}
+
+function lcSales(val) { lcState.sales = val; lcSalesUI(val); }
+function lcSalesUI(val) {
+  ['hot','neu','cold'].forEach(v => {
+    const btn = document.getElementById('lc-sales-' + v);
+    btn.className = 'lc-sales-btn' + (val === v ? ' sel-' + v : '');
+  });
+}
+
+function saveLcModal() {
+  if (!lcKey || !lcPid) return;
+  const prods = S.products[lcKey] || [];
+  const p = prods.find(x => x.id === lcPid);
+  if (!p) return;
+
+  const ordered  = parseInt(document.getElementById('lc-ordered').value);
+  const received = parseInt(document.getElementById('lc-received').value);
+
+  p.lc = {
+    ...lcState,
+    stage:    document.getElementById('lc-stage').value,
+    ordered:  isNaN(ordered)  ? null : ordered,
+    received: isNaN(received) ? null : received,
+  };
+
+  closeLcModal();
+  syncToFirebase();
+  render();
+}
+
+function cleanFileName(filename) {
+  return filename
+    .replace(/\.[^.]+$/, '')          // strip extension
+    .replace(/[-_]+/g, ' ')           // hyphens/underscores → spaces
+    .replace(/\s+/g, ' ').trim()      // collapse whitespace
+    .replace(/\b\w/g, c => c.toUpperCase()); // title case
+}
+
+function onFileSelect(e) { Array.from(e.target.files).forEach(readFile); }
+function readFile(file) {
+  const r = new FileReader();
+  r.onload = ev => {
+    S.pendingFiles.push({ id:`f${Date.now()}${Math.random()}`, name:file.name, src:ev.target.result });
+    renderPreviews();
+    // Auto-fill name field from first file added
+    const nameField = document.getElementById('up-name');
+    if (!nameField.value.trim() || nameField.dataset.autoFilled === 'true') {
+      nameField.value = cleanFileName(S.pendingFiles[0].name);
+      nameField.dataset.autoFilled = 'true';
+    }
+  };
+  r.readAsDataURL(file);
+}
+function renderPreviews() {
+  document.getElementById('pvGrid').innerHTML = S.pendingFiles.map((f,i) => `
+    <div class="pv-item">
+      <img src="${f.src}"><div class="pv-name">${f.name}</div>
+      <button class="pv-rm" onclick="S.pendingFiles.splice(${i},1);renderPreviews()">✕</button>
+    </div>`).join('');
+}
+
+function confirmUpload() {
+  const name = document.getElementById('up-name').value.trim() || 'Untitled';
+  const capId = document.getElementById('up-cap').value;
+  const notes = document.getElementById('up-notes').value.trim();
+  const cap   = S.capsules.find(c=>c.id===capId);
+  const type  = cap ? cap.type : 'basic';
+  const isPromo = capId === 'valentines';
+
+  // For acc__ cells the key IS the preKey; for normal it comes from date select
+  const isAcc = uploadPreKey && uploadPreKey.startsWith('acc__');
+  const key = isAcc ? uploadPreKey : document.getElementById('up-date').value;
+  if (!key) return;
+
+  if (!S.products[key]) S.products[key] = [];
+  if (S.pendingFiles.length > 0) {
+    const baseName = document.getElementById('up-name').value.trim();
+    S.pendingFiles.forEach(f => {
+      // If multiple files, use each file's own cleaned name; single file uses the field value
+      const name = S.pendingFiles.length === 1
+        ? (baseName || cleanFileName(f.name))
+        : (baseName && baseName !== cleanFileName(S.pendingFiles[0].name) ? baseName : cleanFileName(f.name));
+      S.products[key].push({ id:`p${Date.now()}${Math.random()}`, name, type, src:f.src, notes, isPromo });
+    });
+  } else {
+    S.products[key].push({ id:`p${Date.now()}`, name, type:'accessory', src:null, notes, isPromo:false });
+  }
+  closeUpload(); syncToFirebase(); render();
+}
+
+// ═══ CAPSULE ═══
+function openCapModal() { document.getElementById('capOverlay').classList.remove('hidden'); }
+function createCap() {
+  const name = document.getElementById('cap-name').value.trim();
+  if (!name) return;
+  S.capsules.push({
+    id: name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''),
+    name, color: S.pickedColor,
+    s: document.getElementById('cap-season').value,
+    type: document.getElementById('cap-type').value,
+    months: null, // shows for full season; user can edit manually
+    desc: document.getElementById('cap-desc').value,
+  });
+  document.getElementById('capOverlay').classList.add('hidden');
+  syncToFirebase(); render();
+}
+function pickColor(el) {
+  document.querySelectorAll('.cswatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel'); S.pickedColor = el.dataset.c;
+}
+
+// ═══ FILTERS ═══
+function setSeason(s, el) {
+  document.querySelectorAll('.chip').forEach(c => {
+    if(['chip-all','chip-sp','chip-su','chip-fa','chip-ho'].some(cls=>c.classList.contains(cls))) c.classList.remove('active');
+  });
+  el.classList.add('active'); S.seasonFilter = s; render();
+}
+function setTypeView(t, el) {
+  document.querySelectorAll('[id^="vtype-"]').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active'); S.typeView = t; render();
+}
+function setYear(y, el) {
+  document.querySelectorAll('[id^="y"]').forEach(e=>e.style.borderColor='');
+  el.style.borderColor='var(--white)'; S.year=y;
+  document.getElementById('yrLabel').textContent=y;
+  initEvents(); render();
+}
+
+// ═══ DRAG ═══
+function startDrag(e, key, pid) { e.dataTransfer.setData('text/plain', JSON.stringify({fk:key,pid})); }
+function moveProduct(fk, pid, tk) {
+  if(fk===tk||!S.products[fk]) return;
+  const i = S.products[fk].findIndex(p=>p.id===pid);
+  if(i===-1) return;
+  const [prod] = S.products[fk].splice(i,1);
+  if(!S.products[tk]) S.products[tk]=[];
+  S.products[tk].push(prod); syncToFirebase(); render();
+}
+
+function removeProduct(key, pid) {
+  if(!S.products[key]) return;
+  S.products[key]=S.products[key].filter(p=>p.id!==pid);
+  syncToFirebase(); render();
+}
+
+// ═══ CTX ═══
+let ctxS = {};
+function showCtx(e, key, pid) {
+  e.preventDefault(); e.stopPropagation(); ctxS={key,pid};
+  const m=document.getElementById('ctxMenu');
+  m.classList.remove('hidden'); m.style.left=e.clientX+'px'; m.style.top=e.clientY+'px';
+}
+function ctxDo(a) {
+  const {key,pid}=ctxS;
+  if(a==='remove'&&pid) removeProduct(key,pid);
+  else if(a==='view'&&pid) openDetail(key, pid);
+  else if(a==='edit'&&pid) { const p=(S.products[key]||[]).find(x=>x.id===pid); if(p){const n=prompt('Name:',p.name);if(n){p.name=n;syncToFirebase();render();}} }
+  document.getElementById('ctxMenu').classList.add('hidden');
+}
+document.addEventListener('click',()=>document.getElementById('ctxMenu').classList.add('hidden'));
+
+// ═══ STATS ═══
+function updateStats() {
+  const all=Object.values(S.products).flat();
+  document.getElementById('st-skus').textContent=all.length;
+  document.getElementById('st-caps').textContent=S.capsules.length;
+  document.getElementById('st-art').textContent=all.filter(p=>p.type==='artist').length;
+  document.getElementById('st-thu').textContent=all.filter(p=>p.type==='capsule').length;
+}
+
+// ═══ SHARE ═══
+function showShare(){document.getElementById('sharebar').classList.toggle('hidden');}
+function copyShare(){
+  const u=document.getElementById('shareurl'); u.select();
+  navigator.clipboard.writeText(u.value);
+  const b=u.nextElementSibling; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',1500);
+}
+
+// ═══ TUESDAY CAPSULE META ═══
+let tueMetaKey = null;
+let tuePickedColor = '#4fc3f7';
+let tuePickedSlots = 1;
+
+function openTueMetaModal(key) {
+  tueMetaKey = key;
+  const existing = S.tueMeta[key] || null;
+  tuePickedSlots = existing ? existing.maxSlots : 1;
+  tuePickedColor = existing ? existing.color : '#4fc3f7';
+
+  // Parse date from key for label
+  const datePart = key.split('__')[0];
+  const [y,m,d] = datePart.split('-').map(Number);
+  const dateObj = new Date(y,m,d);
+  document.getElementById('tueMetaDateLabel').textContent = fmtLong(dateObj);
+  document.getElementById('tueMetaTitle').textContent = existing && existing.name ? existing.name : 'Tuesday Drop';
+  document.getElementById('tue-cap-name').value = existing ? (existing.name || '') : '';
+
+  // Slot picker
+  document.querySelectorAll('.slot-btn').forEach(b => {
+    b.classList.toggle('sel', parseInt(b.dataset.slots) === tuePickedSlots);
+  });
+  updateSlotHint();
+
+  // Color row
+  document.getElementById('tueColorRow').style.display = tuePickedSlots > 1 ? '' : 'none';
+  document.querySelectorAll('#tueMetaOverlay .cswatch').forEach(s => {
+    s.classList.toggle('sel', s.dataset.c === tuePickedColor);
+  });
+
+  document.getElementById('tueMetaOverlay').classList.remove('hidden');
+}
+
+function closeTueMeta() { document.getElementById('tueMetaOverlay').classList.add('hidden'); }
+
+function pickSlots(el) {
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  tuePickedSlots = parseInt(el.dataset.slots);
+  updateSlotHint();
+  document.getElementById('tueColorRow').style.display = tuePickedSlots > 1 ? '' : 'none';
+}
+
+function updateSlotHint() {
+  const hints = {
+    1: '1 SKU — standard single artist tee',
+    2: '2 SKUs — double drop',
+    3: '3 SKUs — small capsule',
+    4: '4 SKUs — mid capsule',
+    5: '5 SKUs — full Tuesday capsule',
+  };
+  document.getElementById('slotHint').textContent = hints[tuePickedSlots] || '';
+}
+
+function pickTueColor(el) {
+  document.querySelectorAll('#tueMetaOverlay .cswatch').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  tuePickedColor = el.dataset.c;
+}
+
+function saveTueMeta() {
+  if (!tueMetaKey) return;
+  const name = document.getElementById('tue-cap-name').value.trim();
+  if (tuePickedSlots <= 1 && !name) {
+    // Reset to standard
+    delete S.tueMeta[tueMetaKey];
+  } else {
+    S.tueMeta[tueMetaKey] = {
+      name: name || 'Capsule Drop',
+      color: tuePickedColor,
+      maxSlots: tuePickedSlots,
+    };
+  }
+  closeTueMeta();
+  syncToFirebase(); render();
+}
+
+function clearTueMeta() {
+  if (tueMetaKey) delete S.tueMeta[tueMetaKey];
+  closeTueMeta();
+  syncToFirebase(); render();
+}
+
+function editTueMeta(key) { openTueMetaModal(key); }
+
+// Drop zone for upload modal
+window.addEventListener('DOMContentLoaded', () => {
+  const dz=document.getElementById('dzone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dz-active');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dz-active'));
+  dz.addEventListener('drop',e=>{
+    e.preventDefault(); dz.classList.remove('dz-active');
+    Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(readFile);
+  });
+
+  // Expose all onclick-referenced functions to global scope (required for ES modules)
+  Object.assign(window, {
+    openUploadModal, closeUpload, confirmUpload, rebuildDates, onFileSelect,
+    openCapModal, createCap, pickColor,
+    setSeason, setTypeView, setYear,
+    removeProduct, showCtx, ctxDo,
+    showShare, copyShare,
+    openTueMetaModal, closeTueMeta, saveTueMeta, clearTueMeta,
+    pickSlots, pickTueColor, editTueMeta,
+    openLcModal, closeLcModal, lcToggle, lcSales, saveLcModal,
+    openDetail, closeDetail, closeDetailModal, detailEditStatus,
+    startDrag, toggleExpand,
+  });
+
+  // ── Boot from Firestore, then subscribe to live updates
+  setSyncStatus('loading');
+  onSnapshot(CAL_DOC, (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      S.products = data.products || {};
+      S.tueMeta  = data.tueMeta  || {};
+      if (data.capsules && data.capsules.length > S.capsules.length) {
+        S.capsules = data.capsules;
+      }
+    }
+    initEvents();
+    render();
+    setSyncStatus('live');
+  }, (err) => {
+    console.error('Firestore listen error:', err);
+    setSyncStatus('error');
+    initEvents();
+    render();
+  });
+});
+</script>
+</body>
+</html>
