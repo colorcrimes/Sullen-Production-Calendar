@@ -826,13 +826,32 @@ if (localStorage.getItem('sullen_auth') === '1') {
         </div>
         <div>
           <label class="fl">Release Date</label>
-          <select class="fi" id="up-date" onchange="toggleCustomDate()"></select>
+          <div id="up-date-display" class="fi" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none" onclick="toggleDatePicker()">
+            <span id="up-date-label" style="color:#555">Select a date…</span>
+            <span style="color:#444;font-size:12px">📅</span>
+          </div>
+          <input type="hidden" id="up-date">
         </div>
       </div>
-      <!-- Custom date picker — shown when "Custom Date" is selected -->
-      <div class="fg" id="customDateRow" style="display:none">
-        <label class="fl">Pick Any Date</label>
-        <input class="fi" id="up-custom-date" type="date" style="color-scheme:dark">
+
+      <!-- Inline calendar picker -->
+      <div id="upCalPicker" style="display:none;margin-bottom:14px">
+        <div style="background:#0d0d0d;border:1px solid #222;border-radius:3px;padding:12px">
+          <!-- Month nav -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <button onclick="upCalNav(-1)" style="background:transparent;border:1px solid #222;color:#888;width:26px;height:26px;border-radius:2px;cursor:pointer;font-size:14px;line-height:1">‹</button>
+            <span id="upCalMonthLabel" style="font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:2px;color:#aaa;text-transform:uppercase"></span>
+            <button onclick="upCalNav(1)" style="background:transparent;border:1px solid #222;color:#888;width:26px;height:26px;border-radius:2px;cursor:pointer;font-size:14px;line-height:1">›</button>
+          </div>
+          <!-- Day headers -->
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
+            ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div style="font-family:var(--font-ui);font-size:9px;color:#333;text-align:center;padding:2px 0;font-weight:700;letter-spacing:.5px">${d}</div>`).join('')}
+          </div>
+          <!-- Day grid -->
+          <div id="upCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px"></div>
+          <!-- Suggested dates hint -->
+          <div id="upCalHint" style="margin-top:8px;font-family:var(--font-ui);font-size:9px;color:#333;letter-spacing:.5px;text-align:center"></div>
+        </div>
       </div>
       <div class="fg">
         <label class="fl">Notes / Marketing Copy</label>
@@ -2169,6 +2188,11 @@ function openUploadModal(preKey) {
   document.getElementById('up-name').value = '';
   document.getElementById('up-name').dataset.autoFilled = '';
   document.getElementById('up-notes').value = '';
+  document.getElementById('up-date').value = '';
+  document.getElementById('up-date-label').textContent = 'Select a date…';
+  document.getElementById('up-date-label').style.color = '#555';
+  document.getElementById('upCalPicker').style.display = 'none';
+  upCalMonth = new Date(S.year, new Date().getMonth(), 1);
 
   const capSel = document.getElementById('up-cap');
   // Build options: capsules + accessory categories
@@ -2199,71 +2223,115 @@ function openUploadModal(preKey) {
 }
 
 function rebuildDates() {
-  buildDates(document.getElementById('up-cap').value, null);
+  // Reset date selection when capsule changes
+  document.getElementById('up-date').value = '';
+  document.getElementById('up-date-label').textContent = 'Select a date…';
+  document.getElementById('up-date-label').style.color = '#555';
+  document.getElementById('upCalPicker').style.display = 'none';
+  upCalMonth = new Date(S.year, 0, 1); // reset to Jan of current year
+  renderUpCal();
 }
 
-function toggleCustomDate() {
-  const val = document.getElementById('up-date').value;
-  document.getElementById('customDateRow').style.display = val === '__custom__' ? '' : 'none';
+function toggleCustomDate() {} // no longer needed, kept for safety
+
+// ── Inline calendar picker state ──
+let upCalMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+function toggleDatePicker() {
+  const picker = document.getElementById('upCalPicker');
+  const isHidden = picker.style.display === 'none';
+  picker.style.display = isHidden ? '' : 'none';
+  if (isHidden) renderUpCal();
+}
+
+function upCalNav(dir) {
+  upCalMonth = new Date(upCalMonth.getFullYear(), upCalMonth.getMonth() + dir, 1);
+  renderUpCal();
+}
+
+function renderUpCal() {
+  const y = upCalMonth.getFullYear();
+  const m = upCalMonth.getMonth();
+  const capId = document.getElementById('up-cap').value;
+  const cap = S.capsules.find(c => c.id === capId);
+  const isTueOnly = cap && cap.type === 'artist';
+
+  // Month label
+  document.getElementById('upCalMonthLabel').textContent =
+    upCalMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Build suggested dates set (Tue + Thu for this month)
+  const tues = getTuesdays(y, m).map(d => d.getDate());
+  const thurs = getThursdays(y, m).map(d => d.getDate());
+  const suggested = new Set(isTueOnly ? tues : [...tues, ...thurs]);
+
+  // Build grid
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const selectedVal = document.getElementById('up-date').value;
+  const selectedDk = selectedVal ? selectedVal.split('__')[0] : null;
+
+  let html = '';
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div></div>`;
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(y, m, day);
+    const dkStr = dk(d);
+    const key = dkStr + '__' + capId;
+    const isSelected = selectedDk === dkStr;
+    const isSuggested = suggested.has(day);
+    const dow = d.getDay();
+    const isTue = dow === 2;
+    const isThu = dow === 4;
+    const isToday = d.toDateString() === new Date().toDateString();
+
+    let bg = 'transparent';
+    let color = '#444';
+    let border = '1px solid transparent';
+    let fw = '400';
+
+    if (isSelected) { bg = 'var(--red)'; color = '#fff'; border = '1px solid var(--red)'; fw = '700'; }
+    else if (isTue && (isTueOnly || !isTueOnly)) { color = '#4fc3f7'; if (isSuggested) { border = '1px solid rgba(79,195,247,.3)'; bg = 'rgba(79,195,247,.06)'; } }
+    else if (isThu) { color = '#f5c518'; if (isSuggested) { border = '1px solid rgba(245,197,24,.3)'; bg = 'rgba(245,197,24,.06)'; } }
+    else if (isToday) { border = '1px solid #333'; color = '#888'; }
+
+    html += `<div onclick="selectUpCalDate('${key}','${dkStr}',${day},${m})"
+      style="text-align:center;padding:4px 2px;border-radius:2px;cursor:pointer;
+             background:${bg};color:${color};border:${border};font-weight:${fw};
+             font-family:var(--font-ui);font-size:11px;letter-spacing:.3px;
+             transition:background .1s"
+      onmouseover="if('${isSelected}'!=='true')this.style.background='#1a1a1a'"
+      onmouseout="if('${isSelected}'!=='true')this.style.background='${bg}'"
+    >${day}</div>`;
+  }
+
+  document.getElementById('upCalGrid').innerHTML = html;
+
+  // Hint
+  const hint = isTueOnly
+    ? '<span style="color:#4fc3f7">■</span> Tue = Artist Series drop'
+    : '<span style="color:#4fc3f7">■</span> Tue &nbsp;<span style="color:#f5c518">■</span> Thu = suggested drop days';
+  document.getElementById('upCalHint').innerHTML = hint;
+}
+
+function selectUpCalDate(key, dkStr, day, month) {
+  document.getElementById('up-date').value = key;
+  const d = new Date(S.year, month, day);
+  const label = fmtLong(d);
+  document.getElementById('up-date-label').textContent = label;
+  document.getElementById('up-date-label').style.color = '#f0ede8';
+  document.getElementById('upCalPicker').style.display = 'none';
+  renderUpCal(); // re-render to show selection highlight
 }
 
 function buildDates(capId, selectDk) {
-  const cap = S.capsules.find(c => c.id === capId);
-  const isAcc = capId && capId.startsWith('acc__');
-  const isTueOnly = cap && cap.type === 'artist';
-  const sel = document.getElementById('up-date');
-  sel.innerHTML = '';
-
-  if (isAcc) {
-    if (selectDk) {
-      const opt = document.createElement('option');
-      opt.value = selectDk; opt.textContent = 'Selected week'; opt.selected = true;
-      sel.appendChild(opt);
-    }
-    return;
-  }
-
-  // Group by month
-  MONTHS.forEach(meta => {
-    const tuesdays  = getTuesdays(S.year, meta.m);
-    const thursdays = getThursdays(S.year, meta.m);
-
-    // For artist-series: Tuesdays only. For capsules: Thursdays + Tuesdays
-    const entries = [];
-
-    if (isTueOnly) {
-      tuesdays.forEach(d => entries.push({ d, label: `Tue ${fmtLong(d)}`, key: dk(d) + '__' + capId }));
-    } else {
-      thursdays.forEach(d => entries.push({ d, label: `Thu ${fmtLong(d)}`, key: dk(d) + '__' + capId }));
-      tuesdays.forEach(d  => entries.push({ d, label: `Tue ${fmtLong(d)}`,  key: dk(d) + '__' + capId }));
-      // Sort by date
-      entries.sort((a, b) => a.d - b.d);
-    }
-
-    if (entries.length === 0) return;
-    const grp = document.createElement('optgroup');
-    grp.label = meta.name;
-    entries.forEach(({ d, label, key }) => {
-      const opt = document.createElement('option');
-      opt.value = key;
-      opt.textContent = label;
-      if (selectDk && dk(d) === selectDk) opt.selected = true;
-      grp.appendChild(opt);
-    });
-    sel.appendChild(grp);
-  });
-
-  // Always add Custom Date option at bottom
-  const divider = document.createElement('option');
-  divider.disabled = true; divider.textContent = '──────────';
-  sel.appendChild(divider);
-  const custom = document.createElement('option');
-  custom.value = '__custom__';
-  custom.textContent = '📅 Custom Date…';
-  sel.appendChild(custom);
-
-  // Hide custom date row by default
-  document.getElementById('customDateRow').style.display = 'none';
+  // Legacy function — just reset the picker
+  document.getElementById('up-date').value = '';
+  document.getElementById('up-date-label').textContent = 'Select a date…';
+  document.getElementById('up-date-label').style.color = '#555';
+  renderUpCal();
 }
 
 function closeUpload() { document.getElementById('uploadOverlay').classList.add('hidden'); }
@@ -2650,15 +2718,7 @@ async function confirmUpload() {
   if (isAcc) {
     key = uploadPreKey;
   } else {
-    const dateVal = document.getElementById('up-date').value;
-    if (dateVal === '__custom__') {
-      const customDate = document.getElementById('up-custom-date').value;
-      if (!customDate) return;
-      const d = new Date(customDate + 'T12:00:00'); // avoid timezone shift
-      key = dk(d) + '__' + capId;
-    } else {
-      key = dateVal;
-    }
+    key = document.getElementById('up-date').value;
   }
   if (!key) return;
 
@@ -2887,7 +2947,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
-    openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, onFileSelect,
+    openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect,
     openCapModal, createCap, pickColor,
     setSeason, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
