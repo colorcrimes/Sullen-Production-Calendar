@@ -1226,6 +1226,7 @@ if (localStorage.getItem('sullen_auth') === '1') {
 // ═══ FIREBASE ═══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDd5VhYxpbfI2vptOA5UadZyghRzEO-HTI",
@@ -1237,7 +1238,24 @@ const firebaseConfig = {
 };
 
 const fbApp = initializeApp(firebaseConfig);
-const db    = getFirestore(fbApp);
+const db      = getFirestore(fbApp);
+const storage = getStorage(fbApp);
+
+// ─── Upload image (base64) to Firebase Storage, return download URL ───
+async function uploadImageToStorage(base64src, path) {
+  const storageRef = ref(storage, path);
+  // Strip data URL prefix for uploadString
+  const snapshot = await uploadString(storageRef, base64src, 'data_url');
+  return await getDownloadURL(snapshot.ref);
+}
+
+// ─── Delete image from Firebase Storage by URL ───
+async function deleteImageFromStorage(url) {
+  try {
+    const storageRef = ref(storage, url);
+    await deleteObject(storageRef);
+  } catch(e) { /* ignore if already gone */ }
+}
 
 // Per-year docs: calendar/2026, calendar/2027, etc.
 // Shared meta doc: calendar/__meta (stores years list, shared capsules)
@@ -2372,8 +2390,10 @@ function onAssetFileSelect(e) {
 function readAssetFile(file) {
   const r = new FileReader();
   r.onload = ev => {
-    assetPendingFiles.push({ id:`a${Date.now()}${Math.random()}`, name: cleanFileName(file.name), src: ev.target.result });
-    renderAssetPreviews();
+    compressImage(ev.target.result, 1200, 0.78, compressed => {
+      assetPendingFiles.push({ id:`a${Date.now()}${Math.random()}`, name: cleanFileName(file.name), src: compressed });
+      renderAssetPreviews();
+    });
   };
   r.readAsDataURL(file);
 }
@@ -2385,15 +2405,27 @@ function renderAssetPreviews() {
       <button class="pv-rm" onclick="assetPendingFiles.splice(${i},1);renderAssetPreviews()">✕</button>
     </div>`).join('');
 }
-function confirmAssetUpload() {
+async function confirmAssetUpload() {
   if (!detailKey || !detailPid || assetPendingFiles.length === 0) { closeAssetUpload(); return; }
   const prods = S.products[detailKey] || [];
   const p = prods.find(x => x.id === detailPid);
   if (!p) return;
   if (!p.assets) p.assets = {};
   if (!p.assets[assetUploadCat]) p.assets[assetUploadCat] = [];
-  assetPendingFiles.forEach(f => p.assets[assetUploadCat].push({ name: f.name, src: f.src }));
+
+  setSyncStatus('saving');
   closeAssetUpload();
+
+  for (const f of assetPendingFiles) {
+    let src = f.src;
+    if (f.src && f.src.startsWith('data:')) {
+      try {
+        const aid = `a${Date.now()}${Math.random()}`;
+        src = await uploadImageToStorage(f.src, `assets/${S.year}/${detailPid}/${assetUploadCat}/${aid}.jpg`);
+      } catch(e) { console.error('Asset storage error:', e); }
+    }
+    p.assets[assetUploadCat].push({ name: f.name, src });
+  }
   syncToFirebase();
   render();
   renderAssetPanel();
@@ -2523,17 +2555,32 @@ function cleanFileName(filename) {
 }
 
 function onFileSelect(e) { Array.from(e.target.files).forEach(readFile); }
+function compressImage(src, maxW, quality, cb) {
+  const img = new Image();
+  img.onload = () => {
+    const scale = Math.min(1, maxW / img.width);
+    const w = Math.round(img.width  * scale);
+    const h = Math.round(img.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = src;
+}
+
 function readFile(file) {
   const r = new FileReader();
   r.onload = ev => {
-    S.pendingFiles.push({ id:`f${Date.now()}${Math.random()}`, name:file.name, src:ev.target.result });
-    renderPreviews();
-    // Auto-fill name field from first file added
-    const nameField = document.getElementById('up-name');
-    if (!nameField.value.trim() || nameField.dataset.autoFilled === 'true') {
-      nameField.value = cleanFileName(S.pendingFiles[0].name);
-      nameField.dataset.autoFilled = 'true';
-    }
+    compressImage(ev.target.result, 900, 0.72, compressed => {
+      S.pendingFiles.push({ id:`f${Date.now()}${Math.random()}`, name:file.name, src:compressed });
+      renderPreviews();
+      const nameField = document.getElementById('up-name');
+      if (!nameField.value.trim() || nameField.dataset.autoFilled === 'true') {
+        nameField.value = cleanFileName(S.pendingFiles[0].name);
+        nameField.dataset.autoFilled = 'true';
+      }
+    });
   };
   r.readAsDataURL(file);
 }
@@ -2545,33 +2592,42 @@ function renderPreviews() {
     </div>`).join('');
 }
 
-function confirmUpload() {
-  const name = document.getElementById('up-name').value.trim() || 'Untitled';
+async function confirmUpload() {
   const capId = document.getElementById('up-cap').value;
   const notes = document.getElementById('up-notes').value.trim();
   const cap   = S.capsules.find(c=>c.id===capId);
   const type  = cap ? cap.type : 'basic';
   const isPromo = capId === 'valentines';
-
-  // For acc__ cells the key IS the preKey; for normal it comes from date select
   const isAcc = uploadPreKey && uploadPreKey.startsWith('acc__');
   const key = isAcc ? uploadPreKey : document.getElementById('up-date').value;
   if (!key) return;
 
+  // Show saving indicator
+  setSyncStatus('saving');
+  closeUpload();
+
   if (!S.products[key]) S.products[key] = [];
+
   if (S.pendingFiles.length > 0) {
     const baseName = document.getElementById('up-name').value.trim();
-    S.pendingFiles.forEach(f => {
-      // If multiple files, use each file's own cleaned name; single file uses the field value
+    for (const f of S.pendingFiles) {
       const name = S.pendingFiles.length === 1
         ? (baseName || cleanFileName(f.name))
         : (baseName && baseName !== cleanFileName(S.pendingFiles[0].name) ? baseName : cleanFileName(f.name));
-      S.products[key].push({ id:`p${Date.now()}${Math.random()}`, name, type, src:f.src, notes, isPromo });
-    });
+      const pid = `p${Date.now()}${Math.random()}`;
+      let src = f.src;
+      // Upload to Firebase Storage if it's an image
+      if (f.src && f.src.startsWith('data:')) {
+        try {
+          src = await uploadImageToStorage(f.src, `cads/${S.year}/${key}/${pid}.jpg`);
+        } catch(e) { console.error('Storage upload error:', e); }
+      }
+      S.products[key].push({ id: pid, name, type, src, notes, isPromo });
+    }
   } else {
-    S.products[key].push({ id:`p${Date.now()}`, name, type:'accessory', src:null, notes, isPromo:false });
+    S.products[key].push({ id:`p${Date.now()}`, name: document.getElementById('up-name').value.trim() || 'Untitled', type:'accessory', src:null, notes, isPromo:false });
   }
-  closeUpload(); syncToFirebase(); render();
+  syncToFirebase(); render();
 }
 
 // ═══ CAPSULE ═══
@@ -2653,7 +2709,10 @@ function updateStats() {
 }
 
 // ═══ SHARE ═══
-function showShare(){document.getElementById('sharebar').classList.toggle('hidden');}
+function showShare(){
+  document.getElementById('shareurl').value = window.location.href.split('?')[0];
+  document.getElementById('sharebar').classList.toggle('hidden');
+}
 function copyShare(){
   const u=document.getElementById('shareurl'); u.select();
   navigator.clipboard.writeText(u.value);
