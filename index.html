@@ -826,8 +826,13 @@ if (localStorage.getItem('sullen_auth') === '1') {
         </div>
         <div>
           <label class="fl">Release Date</label>
-          <select class="fi" id="up-date"></select>
+          <select class="fi" id="up-date" onchange="toggleCustomDate()"></select>
         </div>
+      </div>
+      <!-- Custom date picker — shown when "Custom Date" is selected -->
+      <div class="fg" id="customDateRow" style="display:none">
+        <label class="fl">Pick Any Date</label>
+        <input class="fi" id="up-custom-date" type="date" style="color-scheme:dark">
       </div>
       <div class="fg">
         <label class="fl">Notes / Marketing Copy</label>
@@ -2197,16 +2202,19 @@ function rebuildDates() {
   buildDates(document.getElementById('up-cap').value, null);
 }
 
+function toggleCustomDate() {
+  const val = document.getElementById('up-date').value;
+  document.getElementById('customDateRow').style.display = val === '__custom__' ? '' : 'none';
+}
+
 function buildDates(capId, selectDk) {
-  const cap = S.capsules.find(c=>c.id===capId);
+  const cap = S.capsules.find(c => c.id === capId);
   const isAcc = capId && capId.startsWith('acc__');
-  const isTue = cap && cap.type==='artist';
+  const isTueOnly = cap && cap.type === 'artist';
   const sel = document.getElementById('up-date');
   sel.innerHTML = '';
 
   if (isAcc) {
-    // Accessory key format: acc__monthIdx__catId__wkN
-    // Just add one option matching the preKey
     if (selectDk) {
       const opt = document.createElement('option');
       opt.value = selectDk; opt.textContent = 'Selected week'; opt.selected = true;
@@ -2215,17 +2223,47 @@ function buildDates(capId, selectDk) {
     return;
   }
 
+  // Group by month
   MONTHS.forEach(meta => {
-    const dates = isTue ? getTuesdays(S.year, meta.m) : getThursdays(S.year, meta.m);
-    dates.forEach(d => {
-      const key = dk(d) + '__' + capId;
+    const tuesdays  = getTuesdays(S.year, meta.m);
+    const thursdays = getThursdays(S.year, meta.m);
+
+    // For artist-series: Tuesdays only. For capsules: Thursdays + Tuesdays
+    const entries = [];
+
+    if (isTueOnly) {
+      tuesdays.forEach(d => entries.push({ d, label: `Tue ${fmtLong(d)}`, key: dk(d) + '__' + capId }));
+    } else {
+      thursdays.forEach(d => entries.push({ d, label: `Thu ${fmtLong(d)}`, key: dk(d) + '__' + capId }));
+      tuesdays.forEach(d  => entries.push({ d, label: `Tue ${fmtLong(d)}`,  key: dk(d) + '__' + capId }));
+      // Sort by date
+      entries.sort((a, b) => a.d - b.d);
+    }
+
+    if (entries.length === 0) return;
+    const grp = document.createElement('optgroup');
+    grp.label = meta.name;
+    entries.forEach(({ d, label, key }) => {
       const opt = document.createElement('option');
       opt.value = key;
-      opt.textContent = (isTue?'Tue ':'Thu ') + fmtLong(d);
+      opt.textContent = label;
       if (selectDk && dk(d) === selectDk) opt.selected = true;
-      sel.appendChild(opt);
+      grp.appendChild(opt);
     });
+    sel.appendChild(grp);
   });
+
+  // Always add Custom Date option at bottom
+  const divider = document.createElement('option');
+  divider.disabled = true; divider.textContent = '──────────';
+  sel.appendChild(divider);
+  const custom = document.createElement('option');
+  custom.value = '__custom__';
+  custom.textContent = '📅 Custom Date…';
+  sel.appendChild(custom);
+
+  // Hide custom date row by default
+  document.getElementById('customDateRow').style.display = 'none';
 }
 
 function closeUpload() { document.getElementById('uploadOverlay').classList.add('hidden'); }
@@ -2608,7 +2646,20 @@ async function confirmUpload() {
   const type  = cap ? cap.type : 'basic';
   const isPromo = capId === 'valentines';
   const isAcc = uploadPreKey && uploadPreKey.startsWith('acc__');
-  const key = isAcc ? uploadPreKey : document.getElementById('up-date').value;
+  let key;
+  if (isAcc) {
+    key = uploadPreKey;
+  } else {
+    const dateVal = document.getElementById('up-date').value;
+    if (dateVal === '__custom__') {
+      const customDate = document.getElementById('up-custom-date').value;
+      if (!customDate) return;
+      const d = new Date(customDate + 'T12:00:00'); // avoid timezone shift
+      key = dk(d) + '__' + capId;
+    } else {
+      key = dateVal;
+    }
+  }
   if (!key) return;
 
   // Show saving indicator
@@ -2836,7 +2887,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
-    openUploadModal, closeUpload, confirmUpload, rebuildDates, onFileSelect,
+    openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, onFileSelect,
     openCapModal, createCap, pickColor,
     setSeason, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
