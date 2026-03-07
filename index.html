@@ -475,7 +475,7 @@
   .cad-strip:hover .cad-strip-rm { display: flex; }
 
   /* ── MODALS ── */
-  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.87); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.87); z-index: 400; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
   .overlay.hidden { display: none; }
   .modal { background: var(--dark); border: 1px solid var(--border); border-top: 3px solid var(--red); width: 620px; max-width: 96vw; max-height: 92vh; overflow-y: auto; border-radius: 3px; }
   .modal.cap-modal { border-top-color: var(--yellow); }
@@ -548,6 +548,120 @@
   .slot-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
   .slot-btn.sel { background: #4fc3f7; color: #000; border-color: #4fc3f7; }
   .slot-btn.slot-1 { border-color: var(--muted); }
+
+  /* ── ASSET FOLDER ── */
+  .detail-tabs { display: flex; border-bottom: 1px solid #1e1e1e; margin-bottom: 14px; }
+  .detail-tab {
+    font-family: var(--font-ui); font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 8px 14px; cursor: pointer; color: #444;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s;
+  }
+  .detail-tab:hover { color: #888; }
+  .detail-tab.active { color: var(--white); border-bottom-color: var(--red); }
+  .detail-panel { display: none; }
+  .detail-panel.active { display: block; }
+
+  .asset-section { margin-bottom: 16px; }
+  .asset-section-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .asset-section-title {
+    font-family: var(--font-ui); font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; color: #555;
+  }
+  .asset-add-btn {
+    background: transparent; border: 1px solid #222; border-radius: 2px;
+    color: #444; font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+    letter-spacing: .8px; text-transform: uppercase; padding: 3px 8px;
+    cursor: pointer; transition: all .15s;
+  }
+  .asset-add-btn:hover { border-color: var(--red); color: var(--red); }
+  .asset-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  }
+  .asset-thumb {
+    position: relative; background: #0d0d0d; border: 1px solid #1e1e1e;
+    border-radius: 2px; overflow: hidden; cursor: pointer;
+    transition: border-color .15s;
+  }
+  .asset-thumb:hover { border-color: #444; }
+  .asset-thumb img {
+    width: 100%; height: 72px; object-fit: cover; display: block;
+  }
+  .asset-thumb-label {
+    font-family: var(--font-ui); font-size: 8px; color: #555;
+    padding: 3px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .asset-thumb-rm {
+    position: absolute; top: 3px; right: 3px; width: 16px; height: 16px;
+    background: var(--red); border: none; border-radius: 50%; color: #fff;
+    font-size: 8px; cursor: pointer; display: none;
+    align-items: center; justify-content: center; z-index: 2;
+  }
+  .asset-thumb:hover .asset-thumb-rm { display: flex; }
+  .asset-empty {
+    font-family: var(--font-ui); font-size: 10px; color: #2e2e2e;
+    text-align: center; padding: 18px 0; border: 1px dashed #1a1a1a;
+    border-radius: 2px; letter-spacing: .5px;
+  }
+  .video-link-list { display: flex; flex-direction: column; gap: 5px; }
+  .video-link-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 2px;
+    padding: 6px 8px; transition: border-color .15s;
+  }
+  .video-link-item:hover { border-color: #333; }
+  .video-link-icon { font-size: 14px; flex-shrink: 0; }
+  .video-link-text {
+    flex: 1; font-family: var(--font-ui); font-size: 10px; color: #aaa;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  .video-link-open {
+    font-family: var(--font-ui); font-size: 9px; color: #444;
+    background: transparent; border: none; cursor: pointer;
+    text-transform: uppercase; letter-spacing: .5px; flex-shrink: 0;
+    transition: color .15s;
+  }
+  .video-link-open:hover { color: #4fc3f7; }
+  .video-link-rm {
+    background: transparent; border: none; color: #2e2e2e;
+    font-size: 11px; cursor: pointer; flex-shrink: 0; transition: color .15s;
+  }
+  .video-link-rm:hover { color: var(--red); }
+
+  /* Asset folder button on product card */
+  .asset-folder-btn {
+    width: 100%; background: transparent; border: 1px solid #1e1e1e;
+    border-radius: 2px; color: #333; font-family: var(--font-ui);
+    font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+    padding: 4px 6px; cursor: pointer; transition: all .15s; margin-top: 3px;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .asset-folder-btn:hover { border-color: #555; color: #aaa; }
+  .asset-folder-btn .af-count {
+    background: #222; border-radius: 8px; padding: 1px 5px;
+    font-size: 8px; color: #666;
+  }
+  .asset-folder-btn.has-assets { border-color: #2a3a2a; color: #4caf50; }
+  .asset-folder-btn.has-assets .af-count { background: rgba(76,175,80,.15); color: #4caf50; }
+
+  /* Asset lightbox (fullscreen viewer) */
+  .asset-viewer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .asset-viewer-overlay.hidden { display: none; }
+  .asset-viewer-img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 2px; }
+  .asset-viewer-close {
+    position: absolute; top: 20px; right: 24px;
+    background: transparent; border: none; color: #fff; font-size: 28px;
+    cursor: pointer; line-height: 1; opacity: .6; transition: opacity .15s;
+  }
+  .asset-viewer-close:hover { opacity: 1; }
+
+  /* Video/link add modal */
+  .video-modal { background: var(--dark); border: 1px solid var(--border); border-top: 3px solid #4fc3f7; width: 480px; max-width: 96vw; border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -800,69 +914,119 @@
       <div class="detail-name" id="detail-name"></div>
       <div class="detail-cap-tag" id="detail-cap-tag"></div>
 
-      <!-- Creative Assets -->
-      <div class="detail-section">
-        <div class="detail-section-title">Creative Assets</div>
-        <div class="detail-check-grid">
-          <div class="detail-check" id="dc-sample">
-            <div class="detail-check-icon">📦</div>
-            <div class="detail-check-label">Sample</div>
+      <!-- Tabs -->
+      <div class="detail-tabs">
+        <div class="detail-tab active" id="dtab-info" onclick="switchDetailTab('info')">Info</div>
+        <div class="detail-tab" id="dtab-assets" onclick="switchDetailTab('assets')">Assets</div>
+      </div>
+
+      <!-- INFO PANEL -->
+      <div class="detail-panel active" id="dpanel-info">
+        <!-- Creative Assets -->
+        <div class="detail-section">
+          <div class="detail-section-title">Creative Assets</div>
+          <div class="detail-check-grid">
+            <div class="detail-check" id="dc-video">
+              <div class="detail-check-icon">🎬</div>
+              <div class="detail-check-label">Video</div>
+            </div>
+            <div class="detail-check" id="dc-studio">
+              <div class="detail-check-icon">📸</div>
+              <div class="detail-check-label">Studio Shot</div>
+            </div>
+            <div class="detail-check" id="dc-lifestyle">
+              <div class="detail-check-icon">🏄</div>
+              <div class="detail-check-label">Lifestyle</div>
+            </div>
           </div>
-          <div class="detail-check" id="dc-studio">
-            <div class="detail-check-icon">📸</div>
-            <div class="detail-check-label">Studio Shot</div>
+        </div>
+
+        <!-- Production Stage -->
+        <div class="detail-section">
+          <div class="detail-section-title">Production Stage</div>
+          <div class="detail-stage-bar">
+            <div class="detail-stage-step" id="ds-pre"    data-stage="pre">Pre-Prod</div>
+            <div class="detail-stage-step" id="ds-sample" data-stage="sample">Sample In</div>
+            <div class="detail-stage-step" id="ds-prod"   data-stage="prod">In Prod</div>
+            <div class="detail-stage-step" id="ds-inv"    data-stage="inv">In House</div>
           </div>
-          <div class="detail-check" id="dc-lifestyle">
-            <div class="detail-check-icon">🏄</div>
-            <div class="detail-check-label">Lifestyle</div>
+        </div>
+
+        <!-- Units -->
+        <div class="detail-section">
+          <div class="detail-section-title">Inventory</div>
+          <div class="detail-units-row">
+            <div class="detail-unit-box">
+              <div class="detail-unit-val" id="du-ordered">—</div>
+              <div class="detail-unit-label">Ordered</div>
+            </div>
+            <div class="detail-unit-box">
+              <div class="detail-unit-val" id="du-received">—</div>
+              <div class="detail-unit-label">Received</div>
+            </div>
+            <div class="detail-unit-box">
+              <div class="detail-unit-val" id="du-pct" style="font-size:22px">—</div>
+              <div class="detail-unit-label">Fill Rate</div>
+              <div class="detail-pct-bar"><div class="detail-pct-fill" id="du-pct-bar" style="width:0%"></div></div>
+            </div>
           </div>
+        </div>
+
+        <!-- Sales -->
+        <div class="detail-section">
+          <div class="detail-section-title">Sales Performance</div>
+          <div class="detail-sales-display">
+            <div class="detail-sales-icon" id="ds-sales-icon">—</div>
+            <div class="detail-sales-text" id="ds-sales-text" style="color:#555">NOT SET</div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="detail-section" id="detail-notes-section">
+          <div class="detail-section-title">Notes</div>
+          <div class="detail-notes" id="detail-notes"></div>
         </div>
       </div>
 
-      <!-- Production Stage -->
-      <div class="detail-section">
-        <div class="detail-section-title">Production Stage</div>
-        <div class="detail-stage-bar">
-          <div class="detail-stage-step" id="ds-pre"    data-stage="pre">Pre-Prod</div>
-          <div class="detail-stage-step" id="ds-sample" data-stage="sample">Sample In</div>
-          <div class="detail-stage-step" id="ds-prod"   data-stage="prod">In Prod</div>
-          <div class="detail-stage-step" id="ds-inv"    data-stage="inv">In House</div>
-        </div>
-      </div>
+      <!-- ASSETS PANEL -->
+      <div class="detail-panel" id="dpanel-assets">
 
-      <!-- Units -->
-      <div class="detail-section">
-        <div class="detail-section-title">Inventory</div>
-        <div class="detail-units-row">
-          <div class="detail-unit-box">
-            <div class="detail-unit-val" id="du-ordered">—</div>
-            <div class="detail-unit-label">Ordered</div>
+        <!-- Studio Images -->
+        <div class="asset-section">
+          <div class="asset-section-hdr">
+            <div class="asset-section-title">📸 Studio Images</div>
+            <button class="asset-add-btn" onclick="openAssetUpload('studio')">+ Add</button>
           </div>
-          <div class="detail-unit-box">
-            <div class="detail-unit-val" id="du-received">—</div>
-            <div class="detail-unit-label">Received</div>
-          </div>
-          <div class="detail-unit-box">
-            <div class="detail-unit-val" id="du-pct" style="font-size:22px">—</div>
-            <div class="detail-unit-label">Fill Rate</div>
-            <div class="detail-pct-bar"><div class="detail-pct-fill" id="du-pct-bar" style="width:0%"></div></div>
-          </div>
+          <div class="asset-grid" id="ag-studio"></div>
         </div>
-      </div>
 
-      <!-- Sales -->
-      <div class="detail-section">
-        <div class="detail-section-title">Sales Performance</div>
-        <div class="detail-sales-display">
-          <div class="detail-sales-icon" id="ds-sales-icon">—</div>
-          <div class="detail-sales-text" id="ds-sales-text" style="color:#555">NOT SET</div>
+        <!-- Lifestyle Images -->
+        <div class="asset-section">
+          <div class="asset-section-hdr">
+            <div class="asset-section-title">🏄 Lifestyle Images</div>
+            <button class="asset-add-btn" onclick="openAssetUpload('lifestyle')">+ Add</button>
+          </div>
+          <div class="asset-grid" id="ag-lifestyle"></div>
         </div>
-      </div>
 
-      <!-- Notes -->
-      <div class="detail-section" id="detail-notes-section">
-        <div class="detail-section-title">Notes</div>
-        <div class="detail-notes" id="detail-notes"></div>
+        <!-- Campaign / Editorial -->
+        <div class="asset-section">
+          <div class="asset-section-hdr">
+            <div class="asset-section-title">🎯 Campaign / Editorial</div>
+            <button class="asset-add-btn" onclick="openAssetUpload('campaign')">+ Add</button>
+          </div>
+          <div class="asset-grid" id="ag-campaign"></div>
+        </div>
+
+        <!-- Video / Reels Links -->
+        <div class="asset-section">
+          <div class="asset-section-hdr">
+            <div class="asset-section-title">🎬 Video & Reels Links</div>
+            <button class="asset-add-btn" onclick="openVideoModal()">+ Add Link</button>
+          </div>
+          <div class="video-link-list" id="vl-list"></div>
+        </div>
+
       </div>
 
       <!-- Actions -->
@@ -870,6 +1034,62 @@
         <button class="btn btn-ghost" style="flex:1" onclick="detailEditStatus()">✏ Update Status</button>
         <button class="btn btn-red" onclick="closeDetailModal()">Close</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSET IMAGE VIEWER (fullscreen) -->
+<div class="asset-viewer-overlay hidden" id="assetViewer" onclick="closeAssetViewer()">
+  <button class="asset-viewer-close" onclick="closeAssetViewer()">✕</button>
+  <img class="asset-viewer-img" id="assetViewerImg" src="" alt="">
+</div>
+
+<!-- VIDEO LINK MODAL -->
+<div class="overlay hidden" id="videoOverlay">
+  <div class="video-modal">
+    <div class="modal-hdr" style="border-top:none">
+      <div class="modal-title">Add Video / Reel Link</div>
+      <button class="modal-x" onclick="closeVideoModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="fl">Label</label>
+        <input class="fi" id="vl-label" type="text" placeholder="e.g. Instagram Reel, TikTok, YouTube">
+      </div>
+      <div class="fg">
+        <label class="fl">URL</label>
+        <input class="fi" id="vl-url" type="url" placeholder="https://...">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeVideoModal()">Cancel</button>
+      <button class="btn btn-red" onclick="saveVideoLink()">Add Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSET UPLOAD MODAL -->
+<div class="overlay hidden" id="assetUploadOverlay">
+  <div class="modal" style="border-top-color:#4fc3f7;width:500px">
+    <div class="modal-hdr" style="border-top:none">
+      <div>
+        <div class="modal-title" id="assetUploadTitle">Upload Assets</div>
+        <div style="font-family:var(--font-ui);font-size:10px;color:#555;margin-top:2px" id="assetUploadSub"></div>
+      </div>
+      <button class="modal-x" onclick="closeAssetUpload()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="drop-zone" id="assetDzone">
+        <input type="file" accept="image/*" multiple onchange="onAssetFileSelect(event)">
+        <div class="dz-icon">🖼</div>
+        <div class="dz-txt">Drop images here or click to browse</div>
+        <div class="dz-sub">JPG, PNG, WEBP</div>
+      </div>
+      <div class="preview-grid" id="assetPvGrid"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeAssetUpload()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmAssetUpload()">Upload</button>
     </div>
   </div>
 </div>
@@ -888,8 +1108,8 @@
 
       <div class="lc-section-hdr">📸 Creative Assets</div>
       <div class="lc-toggle-row">
-        <span class="lc-toggle-label">📦 Sample Received</span>
-        <div class="lc-toggle" id="lc-sample" onclick="lcToggle('sample')"></div>
+        <span class="lc-toggle-label">🎬 Video</span>
+        <div class="lc-toggle" id="lc-video" onclick="lcToggle('video')"></div>
       </div>
       <div class="lc-toggle-row">
         <span class="lc-toggle-label">📸 Studio Shot</span>
@@ -1672,8 +1892,8 @@ function cadStripHTML(p, key) {
   const stageCols   = { pre:'#444', sample:'#ff9800', prod:'#42a5f5', inv:'#4caf50' };
   const salesIcon   = { hot:'🔥', cold:'❄️', neu:'—' }[lc.sales || 'neu'];
 
-  // 3 status dots: sample, studio, lifestyle
-  const dots = ['sample','studio','lifestyle'].map(k =>
+  // 3 status dots: video, studio, lifestyle
+  const dots = ['video','studio','lifestyle'].map(k =>
     `<div class="cad-strip-dot ${lc[k] ? 'on' : ''}" title="${k}"></div>`
   ).join('');
 
@@ -1705,9 +1925,11 @@ function cadStripHTML(p, key) {
 
 function thumbHTML(p, key) {
   const lc = p.lc || {};
+  const assets = p.assets || {};
+  const assetCount = (assets.studio||[]).length + (assets.lifestyle||[]).length + (assets.campaign||[]).length + (assets.videos||[]).length;
   // ── Photo checklist icons
   const icons = [
-    { key:'sample',    icon:'📦', label:'Sample' },
+    { key:'video',     icon:'🎬', label:'Video' },
     { key:'studio',    icon:'📸', label:'Studio Shot' },
     { key:'lifestyle', icon:'🏄', label:'Lifestyle Photos' },
   ];
@@ -1767,6 +1989,9 @@ function thumbHTML(p, key) {
       ${unitsHTML}
 
       <button class="lc-edit-btn" onclick="openLcModal('${key}','${p.id}')">✏ Update Status</button>
+      <button class="asset-folder-btn ${assetCount > 0 ? 'has-assets' : ''}" onclick="openDetailAssets('${key}','${p.id}')">
+        📁 Assets <span class="af-count">${assetCount > 0 ? assetCount : '0'}</span>
+      </button>
       <button class="pt-remove" onclick="removeProduct('${key}','${p.id}')">✕</button>
     </div>
   `;
@@ -1881,7 +2106,7 @@ function openDetail(key, pid) {
   }
 
   // Creative asset checks
-  ['sample','studio','lifestyle'].forEach(k => {
+  ['video','studio','lifestyle'].forEach(k => {
     document.getElementById('dc-' + k).classList.toggle('done', !!lc[k]);
   });
 
@@ -1924,6 +2149,8 @@ function openDetail(key, pid) {
   if (p.notes) { notesEl.textContent = p.notes; notesSection.style.display = 'block'; }
   else { notesSection.style.display = 'none'; }
 
+  // Always start on Info tab
+  switchDetailTab('info');
   document.getElementById('detailOverlay').classList.remove('hidden');
 }
 
@@ -1938,7 +2165,158 @@ function detailEditStatus() {
   if (detailKey && detailPid) openLcModal(detailKey, detailPid);
 }
 
-// ═══ LIFECYCLE MODAL ═══
+// ─── Detail tab switching ───
+function switchDetailTab(tab) {
+  ['info','assets'].forEach(t => {
+    document.getElementById('dtab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('dpanel-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'assets') renderAssetPanel();
+}
+
+// ─── Open detail directly to assets tab (from card button) ───
+function openDetailAssets(key, pid) {
+  openDetail(key, pid);
+  switchDetailTab('assets');
+}
+
+// ─── Render asset panel for current detailKey/detailPid ───
+function renderAssetPanel() {
+  const p = (S.products[detailKey] || []).find(x => x.id === detailPid);
+  if (!p) return;
+  const assets = p.assets || {};
+
+  ['studio','lifestyle','campaign'].forEach(cat => {
+    const imgs = assets[cat] || [];
+    const grid = document.getElementById('ag-' + cat);
+    if (!grid) return;
+    if (imgs.length === 0) {
+      grid.innerHTML = `<div class="asset-empty" style="grid-column:1/-1">No ${cat} images yet</div>`;
+    } else {
+      grid.innerHTML = imgs.map((img, i) => `
+        <div class="asset-thumb">
+          <img src="${img.src}" alt="${img.name}" onclick="viewAsset('${img.src}')">
+          <div class="asset-thumb-label">${img.name}</div>
+          <button class="asset-thumb-rm" onclick="removeAsset('${cat}',${i})">✕</button>
+        </div>`).join('');
+    }
+  });
+
+  // Videos
+  const videos = assets.videos || [];
+  const vl = document.getElementById('vl-list');
+  if (!vl) return;
+  if (videos.length === 0) {
+    vl.innerHTML = `<div class="asset-empty">No video links yet</div>`;
+  } else {
+    vl.innerHTML = videos.map((v, i) => `
+      <div class="video-link-item">
+        <span class="video-link-icon">🎬</span>
+        <span class="video-link-text">${v.label || v.url}</span>
+        <button class="video-link-open" onclick="window.open('${v.url}','_blank')">Open ↗</button>
+        <button class="video-link-rm" onclick="removeVideo(${i})">✕</button>
+      </div>`).join('');
+  }
+}
+
+// ─── Asset upload modal ───
+let assetUploadCat = null;
+let assetPendingFiles = [];
+
+function openAssetUpload(cat) {
+  assetUploadCat = cat;
+  assetPendingFiles = [];
+  const labels = { studio:'Studio Images', lifestyle:'Lifestyle Images', campaign:'Campaign / Editorial' };
+  document.getElementById('assetUploadTitle').textContent = 'Upload ' + (labels[cat] || cat);
+  const p = (S.products[detailKey] || []).find(x => x.id === detailPid);
+  document.getElementById('assetUploadSub').textContent = p ? p.name : '';
+  document.getElementById('assetPvGrid').innerHTML = '';
+  document.getElementById('assetUploadOverlay').classList.remove('hidden');
+}
+function closeAssetUpload() {
+  document.getElementById('assetUploadOverlay').classList.add('hidden');
+}
+function onAssetFileSelect(e) {
+  Array.from(e.target.files).forEach(readAssetFile);
+}
+function readAssetFile(file) {
+  const r = new FileReader();
+  r.onload = ev => {
+    assetPendingFiles.push({ id:`a${Date.now()}${Math.random()}`, name: cleanFileName(file.name), src: ev.target.result });
+    renderAssetPreviews();
+  };
+  r.readAsDataURL(file);
+}
+function renderAssetPreviews() {
+  document.getElementById('assetPvGrid').innerHTML = assetPendingFiles.map((f,i) => `
+    <div class="pv-item">
+      <img src="${f.src}">
+      <div class="pv-name">${f.name}</div>
+      <button class="pv-rm" onclick="assetPendingFiles.splice(${i},1);renderAssetPreviews()">✕</button>
+    </div>`).join('');
+}
+function confirmAssetUpload() {
+  if (!detailKey || !detailPid || assetPendingFiles.length === 0) { closeAssetUpload(); return; }
+  const prods = S.products[detailKey] || [];
+  const p = prods.find(x => x.id === detailPid);
+  if (!p) return;
+  if (!p.assets) p.assets = {};
+  if (!p.assets[assetUploadCat]) p.assets[assetUploadCat] = [];
+  assetPendingFiles.forEach(f => p.assets[assetUploadCat].push({ name: f.name, src: f.src }));
+  closeAssetUpload();
+  syncToFirebase();
+  render();
+  renderAssetPanel();
+}
+
+// ─── Remove asset image ───
+function removeAsset(cat, idx) {
+  const p = (S.products[detailKey] || []).find(x => x.id === detailPid);
+  if (!p || !p.assets || !p.assets[cat]) return;
+  p.assets[cat].splice(idx, 1);
+  syncToFirebase();
+  render();
+  renderAssetPanel();
+}
+
+// ─── Video link modal ───
+function openVideoModal() {
+  document.getElementById('vl-label').value = '';
+  document.getElementById('vl-url').value = '';
+  document.getElementById('videoOverlay').classList.remove('hidden');
+}
+function closeVideoModal() { document.getElementById('videoOverlay').classList.add('hidden'); }
+function saveVideoLink() {
+  const label = document.getElementById('vl-label').value.trim();
+  const url   = document.getElementById('vl-url').value.trim();
+  if (!url) return;
+  const p = (S.products[detailKey] || []).find(x => x.id === detailPid);
+  if (!p) return;
+  if (!p.assets) p.assets = {};
+  if (!p.assets.videos) p.assets.videos = [];
+  p.assets.videos.push({ label: label || url, url });
+  closeVideoModal();
+  syncToFirebase();
+  render();
+  renderAssetPanel();
+}
+function removeVideo(idx) {
+  const p = (S.products[detailKey] || []).find(x => x.id === detailPid);
+  if (!p || !p.assets || !p.assets.videos) return;
+  p.assets.videos.splice(idx, 1);
+  syncToFirebase();
+  render();
+  renderAssetPanel();
+}
+
+// ─── Fullscreen asset viewer ───
+function viewAsset(src) {
+  document.getElementById('assetViewerImg').src = src;
+  document.getElementById('assetViewer').classList.remove('hidden');
+}
+function closeAssetViewer() { document.getElementById('assetViewer').classList.add('hidden'); }
+
+
 let lcKey = null, lcPid = null, lcState = {};
 
 function openLcModal(key, pid) {
@@ -1952,7 +2330,7 @@ function openLcModal(key, pid) {
   document.getElementById('lcModalSub').textContent = key.replace('__', ' · ').replace('__', ' · ');
 
   // Toggles
-  ['sample','studio','lifestyle'].forEach(k => {
+  ['video','studio','lifestyle'].forEach(k => {
     const el = document.getElementById('lc-' + k);
     el.classList.toggle('on', !!lcState[k]);
   });
@@ -2251,6 +2629,16 @@ window.addEventListener('DOMContentLoaded', () => {
     Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(readFile);
   });
 
+  const adz=document.getElementById('assetDzone');
+  if (adz) {
+    adz.addEventListener('dragover',e=>{e.preventDefault();adz.classList.add('dz-active');});
+    adz.addEventListener('dragleave',()=>adz.classList.remove('dz-active'));
+    adz.addEventListener('drop',e=>{
+      e.preventDefault(); adz.classList.remove('dz-active');
+      Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(readAssetFile);
+    });
+  }
+
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, onFileSelect,
@@ -2263,6 +2651,10 @@ window.addEventListener('DOMContentLoaded', () => {
     openLcModal, closeLcModal, lcToggle, lcSales, saveLcModal,
     openDetail, closeDetail, closeDetailModal, detailEditStatus,
     startDrag, toggleExpand,
+    switchDetailTab, openDetailAssets, renderAssetPanel,
+    openAssetUpload, closeAssetUpload, onAssetFileSelect, confirmAssetUpload,
+    removeAsset, openVideoModal, closeVideoModal, saveVideoLink, removeVideo,
+    viewAsset, closeAssetViewer,
   });
 
   // ── Boot from Firestore, then subscribe to live updates
