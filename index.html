@@ -690,8 +690,7 @@
   <div class="chip chip-ho" onclick="setSeason('holiday',this)">Holiday</div>
   <div class="tbar-divider"></div>
   <span class="tlabel">Year:</span>
-  <div class="chip chip-all active" style="border-color:var(--white)" id="y2026" onclick="setYear(2026,this)">2026</div>
-  <div class="chip chip-all" id="y2027" onclick="setYear(2027,this)">2027</div>
+  <div id="yearTabsContainer" style="display:flex;gap:6px;align-items:center"></div>
   <div class="tbar-divider"></div>
   <span class="tlabel">View:</span>
   <div class="chip chip-all active" id="vtype-all" onclick="setTypeView('all',this)">All</div>
@@ -1172,24 +1171,87 @@ const firebaseConfig = {
 
 const fbApp = initializeApp(firebaseConfig);
 const db    = getFirestore(fbApp);
-const CAL_DOC = doc(db, 'calendar', 'main');
 
-// Save full S state to Firestore (debounced 800ms)
+// Per-year docs: calendar/2026, calendar/2027, etc.
+// Shared meta doc: calendar/__meta (stores years list, shared capsules)
+const META_DOC = doc(db, 'calendar', '__meta');
+function yearDoc(y) { return doc(db, 'calendar', String(y)); }
+
+// Save year-specific data (products, tueMeta) — debounced
 let syncTimer = null;
 function syncToFirebase() {
   clearTimeout(syncTimer);
+  setSyncStatus('saving');
   syncTimer = setTimeout(async () => {
     try {
-      await setDoc(CAL_DOC, {
+      // Save year-specific data
+      await setDoc(yearDoc(S.year), {
         products: S.products,
         tueMeta:  S.tueMeta,
-        capsules: S.capsules,
-        year:     S.year,
         updatedAt: Date.now(),
       });
-    } catch(e) { console.error('Firebase save error:', e); }
+      // Save shared meta (years list + capsules)
+      await setDoc(META_DOC, {
+        years:    S.years,
+        capsules: S.capsules,
+        updatedAt: Date.now(),
+      }, { merge: true });
+      setSyncStatus('live');
+    } catch(e) { console.error('Firebase save error:', e); setSyncStatus('error'); }
   }, 800);
 }
+
+// Switch to a different year — load its Firestore doc
+let yearUnsubscribe = null;
+function loadYear(y) {
+  S.year = y;
+  S.products = {};
+  S.tueMeta  = {};
+  document.getElementById('yrLabel').textContent = y;
+  renderYearTabs();
+  initEvents();
+  render();
+  setSyncStatus('loading');
+
+  if (yearUnsubscribe) yearUnsubscribe();
+  yearUnsubscribe = onSnapshot(yearDoc(y), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      S.products = data.products || {};
+      S.tueMeta  = data.tueMeta  || {};
+    } else {
+      S.products = {};
+      S.tueMeta  = {};
+    }
+    initEvents();
+    render();
+    setSyncStatus('live');
+  }, (err) => { console.error('Year listen error:', err); setSyncStatus('error'); });
+}
+
+// Render dynamic year tabs in toolbar
+function renderYearTabs() {
+  const container = document.getElementById('yearTabsContainer');
+  if (!container) return;
+  container.innerHTML = S.years.map(y => `
+    <div class="chip chip-all ${y === S.year ? 'active' : ''}"
+         id="y${y}" onclick="setYear(${y})"
+         style="${y === S.year ? 'border-color:var(--white)' : ''}">${y}</div>
+  `).join('') + `
+    <button class="chip" style="color:#555;border-color:#222;background:transparent;cursor:pointer;font-size:11px" onclick="addYear()">+ Year</button>
+  `;
+}
+
+function addYear() {
+  const next = Math.max(...S.years) + 1;
+  const confirm = window.confirm(`Add ${next} to the calendar?`);
+  if (!confirm) return;
+  S.years.push(next);
+  S.years.sort();
+  syncToFirebase();
+  renderYearTabs();
+}
+
 
 // Show sync status in header
 function setSyncStatus(status) {
@@ -1246,6 +1308,7 @@ const SEASON_STYLE = {
 
 let S = {
   year: 2026,
+  years: [2026, 2027],
   seasonFilter: 'all',
   typeView: 'all',
   pickedColor: '#c8102e',
@@ -2476,11 +2539,8 @@ function setTypeView(t, el) {
   document.querySelectorAll('[id^="vtype-"]').forEach(e=>e.classList.remove('active'));
   el.classList.add('active'); S.typeView = t; render();
 }
-function setYear(y, el) {
-  document.querySelectorAll('[id^="y"]').forEach(e=>e.style.borderColor='');
-  el.style.borderColor='var(--white)'; S.year=y;
-  document.getElementById('yrLabel').textContent=y;
-  initEvents(); render();
+function setYear(y) {
+  loadYear(y);
 }
 
 // ═══ DRAG ═══
@@ -2643,7 +2703,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, onFileSelect,
     openCapModal, createCap, pickColor,
-    setSeason, setTypeView, setYear,
+    setSeason, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
     showShare, copyShare,
     openTueMetaModal, closeTueMeta, saveTueMeta, clearTueMeta,
@@ -2657,26 +2717,19 @@ window.addEventListener('DOMContentLoaded', () => {
     viewAsset, closeAssetViewer,
   });
 
-  // ── Boot from Firestore, then subscribe to live updates
+  // ── Boot: load meta (years list + capsules) then active year
   setSyncStatus('loading');
-  onSnapshot(CAL_DOC, (snap) => {
+  onSnapshot(META_DOC, (snap) => {
     if (snap.exists()) {
       const data = snap.data();
-      S.products = data.products || {};
-      S.tueMeta  = data.tueMeta  || {};
-      if (data.capsules && data.capsules.length > S.capsules.length) {
-        S.capsules = data.capsules;
-      }
+      if (data.years && data.years.length) S.years = data.years.sort();
+      if (data.capsules && data.capsules.length > S.capsules.length) S.capsules = data.capsules;
     }
-    initEvents();
-    render();
-    setSyncStatus('live');
-  }, (err) => {
-    console.error('Firestore listen error:', err);
-    setSyncStatus('error');
-    initEvents();
-    render();
-  });
+    renderYearTabs();
+  }, (err) => { console.error('Meta listen error:', err); });
+
+  // Load the current year's data
+  loadYear(S.year);
 });
 </script>
 </body>
