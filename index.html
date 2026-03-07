@@ -1658,8 +1658,17 @@ function renderMonth(meta) {
 // ─── ARTIST SERIES: one cell per Tuesday ───
 // Default = 1 tee. If a tueMeta exists for that date, it's an elevated capsule drop (up to 5).
 function renderArtistSection(tuesdays) {
-  const cols = tuesdays.length;
-  const cells = tuesdays.map(d => {
+  // Hide 5th Tuesday unless it has CADs or has been upgraded to a capsule slot
+  const visibleTuesdays = tuesdays.filter((d, i) => {
+    if (i < 4) return true; // always show first 4
+    const key = dk(d) + '__artist-series';
+    const hasProducts = (S.products[key] || []).length > 0;
+    const hasMeta = !!S.tueMeta[key];
+    return hasProducts || hasMeta;
+  });
+
+  const cols = visibleTuesdays.length;
+  const cells = visibleTuesdays.map(d => {
     const key = dk(d) + '__artist-series';
     const prods = S.products[key] || [];
     const meta = S.tueMeta[key] || null;       // { name, color, maxSlots }
