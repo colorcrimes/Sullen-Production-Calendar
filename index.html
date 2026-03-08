@@ -2789,7 +2789,10 @@ async function confirmUpload() {
   } else {
     key = document.getElementById('up-date').value;
   }
-  if (!key) return;
+  if (!key) {
+    alert('Please select a release date first.');
+    return;
+  }
 
   // Show saving indicator
   setSyncStatus('saving');
@@ -3016,7 +3019,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
-    openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect,
+    openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect, renderPreviews,
     openCapModal, createCap, pickColor,
     setSeason, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
