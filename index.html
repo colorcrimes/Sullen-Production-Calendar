@@ -1621,17 +1621,32 @@ function renderSidebar() {
 
 function capTagHTML(c) {
   const count = countByCap(c.id);
+  const isBuiltIn = ['artist-series','core-delivery'].includes(c.id);
   return `
-    <div class="ctag">
+    <div class="ctag" style="padding-right:4px">
       <div class="dot" style="background:${c.color}"></div>
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${c.name}</span>
       ${count > 0 ? `<span class="badge">${count}</span>` : ''}
+      ${!isBuiltIn ? `<button onclick="deleteCapsule('${c.id}')" style="background:none;border:none;color:#444;font-size:11px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0" title="Delete capsule">✕</button>` : ''}
     </div>
   `;
 }
 
-function countByCap(id) {
-  return Object.keys(S.products).filter(k=>k.endsWith('__'+id)).reduce((a,k)=>a+S.products[k].length,0);
+function deleteCapsule(id) {
+  const cap = S.capsules.find(c => c.id === id);
+  if (!cap) return;
+  const count = countByCap(id);
+  const msg = count > 0
+    ? `Delete "${cap.name}"? This will also remove ${count} CAD${count>1?'s':''} assigned to it.`
+    : `Delete "${cap.name}"?`;
+  if (!confirm(msg)) return;
+  // Remove capsule
+  S.capsules = S.capsules.filter(c => c.id !== id);
+  // Remove all products keyed to this capsule
+  Object.keys(S.products).forEach(k => {
+    if (k.endsWith('__' + id)) delete S.products[k];
+  });
+  syncToFirebase(); render();
 }
 
 function renderCalendar() {
@@ -3035,7 +3050,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect, renderPreviews,
-    openCapModal, createCap, pickColor,
+    openCapModal, createCap, pickColor, deleteCapsule,
     setSeason, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
     showShare, copyShare,
