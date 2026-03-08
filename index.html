@@ -1672,6 +1672,7 @@ function renderMonth(meta) {
       ${meta.m === 2 && showCaps ? renderBadgeSeriesSection(y) : ''}
       ${(meta.m === 10 || meta.m === 11) && showCaps ? renderCyberWeekSection(y, meta.m) : ''}
       ${showCaps ? renderThursdaySection(thursdays, capRows, meta) : ''}
+      ${showCaps ? renderCustomDatesSection(meta) : ''}
       ${showCaps ? renderAccessoriesSection(meta, thursdays) : ''}
     </div>
   `;
@@ -1915,6 +1916,66 @@ function renderThursdaySection(thursdays, capRows, meta) {
         ${hdrCols}
       </div>
       ${rows || '<div style="padding:14px 12px;color:#333;font-family:var(--font-ui);font-size:11px">No capsules assigned to this season.</div>'}
+    </div>
+  `;
+}
+
+
+// ─── CUSTOM DATES: any product not on a Tue or Thu ───
+function renderCustomDatesSection(meta) {
+  const y = S.year;
+  const tues = new Set(getTuesdays(y, meta.m).map(d => dk(d)));
+  const thurs = new Set(getThursdays(y, meta.m).map(d => dk(d)));
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Find all product keys for this month that are NOT Tue/Thu and NOT accessories
+  const customKeys = Object.keys(S.products).filter(key => {
+    if (key.startsWith('acc__')) return false;
+    const dkStr = key.split('__')[0];
+    if (dkStr.length !== 8) return false;
+    const d = new Date(dkStr.slice(0,4)+'-'+dkStr.slice(4,6)+'-'+dkStr.slice(6,8)+'T12:00:00');
+    if (isNaN(d)) return false;
+    if (d.getFullYear() !== y || d.getMonth() !== meta.m) return false;
+    if (tues.has(dkStr) || thurs.has(dkStr)) return false;
+    if ((S.products[key] || []).length === 0) return false;
+    return true;
+  });
+
+  if (customKeys.length === 0) return '';
+
+  // Group by date
+  const byDate = {};
+  customKeys.forEach(key => {
+    const dkStr = key.split('__')[0];
+    if (!byDate[dkStr]) byDate[dkStr] = [];
+    byDate[dkStr].push(key);
+  });
+
+  const cells = Object.keys(byDate).sort().map(dkStr => {
+    const d = new Date(dkStr.slice(0,4)+'-'+dkStr.slice(4,6)+'-'+dkStr.slice(6,8)+'T12:00:00');
+    const dateLabel = `${DOW[d.getDay()]} ${fmt(d)}`;
+    const keysForDate = byDate[dkStr];
+
+    return `
+      <div style="min-width:160px;flex:1;border:1px solid #1e1e1e;border-radius:2px;overflow:hidden">
+        <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:1px;color:#e040fb;padding:5px 8px;background:#0d0d0d;text-transform:uppercase">${dateLabel}</div>
+        <div class="day-cell" style="border:none;min-height:80px" ondblclick="openUploadModal('${keysForDate[0]}')" oncontextmenu="showCtx(event,'${keysForDate[0]}',null)">
+          ${keysForDate.map(k => renderCellProducts(S.products[k]||[], k)).join('')}
+          <button class="add-btn" onclick="openUploadModal('${keysForDate[0]}')">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div style="margin:0 0 12px 0">
+      <div class="thu-section-hdr" style="margin-bottom:8px">
+        <div style="width:8px;height:8px;border-radius:1px;background:#e040fb;flex-shrink:0"></div>
+        <span style="color:#e040fb">Custom Drop Dates</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding:0">
+        ${cells}
+      </div>
     </div>
   `;
 }
