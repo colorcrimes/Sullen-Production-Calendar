@@ -1809,6 +1809,8 @@ function saveEditCap() {
   syncToFirebase();
   render();
 }
+
+function countByCap(id) {
   return Object.keys(S.products).filter(k => k.endsWith('__' + id)).reduce((a, k) => a + S.products[k].length, 0);
 }
 
