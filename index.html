@@ -1321,7 +1321,15 @@ function loadYear(y) {
   setSyncStatus('loading');
 
   if (yearUnsubscribe) yearUnsubscribe();
+
+  // Fallback: if Firebase doesn't respond in 5s, mark as offline but keep calendar visible
+  const yearTimeout = setTimeout(() => {
+    console.warn('Year load timeout — running offline');
+    setSyncStatus('error');
+  }, 5000);
+
   yearUnsubscribe = onSnapshot(yearDoc(y), (snap) => {
+    clearTimeout(yearTimeout);
     if (snap.exists()) {
       const data = snap.data();
       S.products = data.products || {};
@@ -1333,7 +1341,11 @@ function loadYear(y) {
     initEvents();
     render();
     setSyncStatus('live');
-  }, (err) => { console.error('Year listen error:', err); setSyncStatus('error'); });
+  }, (err) => {
+    clearTimeout(yearTimeout);
+    console.error('Year listen error:', err);
+    setSyncStatus('error');
+  });
 }
 
 // Render dynamic year tabs in toolbar
@@ -3067,14 +3079,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ── Boot: load meta (years list + capsules) then active year
   setSyncStatus('loading');
+
+  // Fallback: if Firebase doesn't respond in 5s, render anyway
+  const bootTimeout = setTimeout(() => {
+    console.warn('Firebase timeout — rendering offline');
+    setSyncStatus('error');
+    renderYearTabs();
+    render();
+  }, 5000);
+
   onSnapshot(META_DOC, (snap) => {
+    clearTimeout(bootTimeout);
     if (snap.exists()) {
       const data = snap.data();
       if (data.years && data.years.length) S.years = data.years.sort();
       if (data.capsules && data.capsules.length > S.capsules.length) S.capsules = data.capsules;
     }
     renderYearTabs();
-  }, (err) => { console.error('Meta listen error:', err); });
+  }, (err) => {
+    clearTimeout(bootTimeout);
+    console.error('Meta listen error:', err);
+    setSyncStatus('error');
+    renderYearTabs();
+    render();
+  });
 
   // Load the current year's data
   loadYear(S.year);
