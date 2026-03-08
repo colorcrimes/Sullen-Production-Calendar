@@ -1332,11 +1332,13 @@ function loadYear(y) {
     clearTimeout(yearTimeout);
     if (snap.exists()) {
       const data = snap.data();
-      S.products = data.products || {};
-      S.tueMeta  = data.tueMeta  || {};
-    } else {
-      S.products = {};
-      S.tueMeta  = {};
+      // Only load if Firestore actually has product data
+      if (data.products && Object.keys(data.products).length > 0) {
+        S.products = data.products;
+      }
+      if (data.tueMeta && Object.keys(data.tueMeta).length > 0) {
+        S.tueMeta = data.tueMeta;
+      }
     }
     initEvents();
     render();
@@ -1629,6 +1631,10 @@ function renderSidebar() {
   }).join('');
 
   document.getElementById('capList').innerHTML = yearRoundHTML + groupsHTML;
+}
+
+function countByCap(id) {
+  return Object.keys(S.products).filter(k => k.endsWith('__' + id)).reduce((a, k) => a + S.products[k].length, 0);
 }
 
 function capTagHTML(c) {
@@ -3093,9 +3099,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (snap.exists()) {
       const data = snap.data();
       if (data.years && data.years.length) S.years = data.years.sort();
+      // Only replace capsules if Firestore has more than we have built-in
       if (data.capsules && data.capsules.length > S.capsules.length) S.capsules = data.capsules;
     }
     renderYearTabs();
+    render(); // always render after meta loads
   }, (err) => {
     clearTimeout(bootTimeout);
     console.error('Meta listen error:', err);
