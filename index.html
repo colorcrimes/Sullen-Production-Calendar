@@ -3166,31 +3166,29 @@ document.addEventListener('click',()=>document.getElementById('ctxMenu').classLi
 function printCalendar() {
   const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const sc = SEASON_STYLE;
+  const seasonColor = { spring:'#c8a800', summer:'#1a7a30', fall:'#b84a00', holiday:'#0d3d80' };
 
   // Group all products by month
   const byMonth = {};
   Object.entries(S.products).forEach(([key, prods]) => {
     if (!prods.length) return;
     if (key.startsWith('acc__')) return;
-    const dkStr = key.split('__')[0];
-    const capId = key.split('__')[1];
+    const parts = key.split('__');
+    if (parts.length < 2) return;
+    const dkStr = parts[0];
+    const capId = parts[1];
     const cap = S.capsules.find(c => c.id === capId);
-    const parts = dkStr.split('-');
-    if (parts.length !== 3) return;
-    const mo = parseInt(parts[1]);
+    const dParts = dkStr.split('-');
+    if (dParts.length !== 3) return;
+    const mo = parseInt(dParts[1]);
+    if (isNaN(mo)) return;
     if (!byMonth[mo]) byMonth[mo] = [];
-    const d = new Date(parseInt(parts[0]), mo, parseInt(parts[2]));
-    prods.forEach(p => {
-      byMonth[mo].push({ p, d, cap, key });
-    });
+    const d = new Date(parseInt(dParts[0]), mo, parseInt(dParts[2]));
+    prods.forEach(p => byMonth[mo].push({ p, d, cap }));
   });
 
-  // Sort months
   const months = Object.keys(byMonth).map(Number).sort((a,b) => a - b);
   if (!months.length) { alert('No CADs to print.'); return; }
-
-  const seasonColor = { spring:'#c8a800', summer:'#1a7a30', fall:'#b84a00', holiday:'#0d3d80' };
 
   const monthSections = months.map(mo => {
     const meta = MONTHS[mo];
@@ -3198,30 +3196,34 @@ function printCalendar() {
     const items = byMonth[mo].sort((a,b) => a.d - b.d);
 
     const cards = items.map(({ p, d, cap }) => {
-      const dateStr = `${DOW[d.getDay()]} ${fmt(d)}`;
-      const capName = cap ? cap.name : '';
-      const imgHtml = p.src
-        ? `<img src="${p.src}" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block">`
-        : `<div style="width:100%;height:160px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999">No Image</div>`;
+      const capColor = cap ? cap.color : '#999';
+      const capName  = cap ? cap.name  : '';
+      const dateStr  = `${DOW[d.getDay()]} ${fmt(d)}`;
+      const imgHtml  = p.src
+        ? `<img src="${p.src}" style="width:100%;height:220px;object-fit:contain;background:#f5f5f5;display:block;padding:8px">`
+        : `<div style="width:100%;height:220px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;color:#aaa">No Image</div>`;
       return `
-        <div style="border:1px solid #ddd;border-radius:3px;overflow:hidden;break-inside:avoid;page-break-inside:avoid">
+        <div style="border:1px solid #e0e0e0;border-top:3px solid ${capColor};border-radius:3px;overflow:hidden;break-inside:avoid;page-break-inside:avoid;background:#fff">
           ${imgHtml}
-          <div style="padding:6px 8px;background:#fff">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'Untitled'}</div>
-            <div style="font-size:9px;color:#666">${capName}</div>
+          <div style="padding:7px 9px;border-top:1px solid #eee">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'Untitled'}</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">
+              <div style="width:8px;height:8px;border-radius:1px;background:${capColor};flex-shrink:0"></div>
+              <div style="font-size:9px;color:#555;font-weight:600">${capName}</div>
+            </div>
             <div style="font-size:9px;color:#999">${dateStr}</div>
           </div>
         </div>`;
     }).join('');
 
     return `
-      <div style="margin-bottom:28px;break-inside:avoid">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid ${sColor}">
-          <div style="font-family:Arial Black,sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#111">${MONTH_NAMES[mo]}</div>
-          <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${sColor};background:${sColor}22;padding:3px 8px;border-radius:2px">${meta.s.toUpperCase()}</div>
-          <div style="font-size:9px;color:#999;margin-left:auto">${items.length} SKU${items.length!==1?'s':''}</div>
+      <div style="margin-bottom:32px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:7px;border-bottom:3px solid ${sColor}">
+          <div style="font-family:Arial Black,sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#111">${MONTH_NAMES[mo]} ${S.year}</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:${sColor};padding:3px 8px;border-radius:2px">${meta.s.toUpperCase()}</div>
+          <div style="font-size:10px;color:#999;margin-left:auto">${items.length} SKU${items.length!==1?'s':''}</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
           ${cards}
         </div>
       </div>`;
@@ -3234,29 +3236,42 @@ function printCalendar() {
 <title>Sullen Release Calendar ${S.year}</title>
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family: Arial, sans-serif; background:#fff; color:#111; padding:20px; }
+  body { font-family: Arial, sans-serif; background:#fff; color:#111; padding:24px; }
   @media print {
     body { padding:10px; }
-    @page { size: landscape; margin:12mm; }
+    @page { size: landscape; margin:10mm; }
   }
 </style>
 </head>
 <body>
-  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:3px solid #111">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:14px;border-bottom:4px solid #111">
     <div>
-      <div style="font-family:Arial Black,sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;text-transform:uppercase">SULLEN ART COLLECTIVE</div>
-      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#666">Release Calendar ${S.year}</div>
+      <div style="font-family:Arial Black,sans-serif;font-size:24px;font-weight:900;letter-spacing:3px;text-transform:uppercase">SULLEN ART COLLECTIVE</div>
+      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#888;margin-top:3px">Release Calendar ${S.year}</div>
     </div>
-    <div style="margin-left:auto;font-size:11px;color:#999">Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+    <div style="margin-left:auto;text-align:right">
+      <div style="font-size:10px;color:#aaa">Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+    </div>
   </div>
   ${monthSections}
+  <script>
+    // Wait for all images to load before printing
+    window.addEventListener('load', function() {
+      const imgs = document.querySelectorAll('img');
+      let loaded = 0;
+      if (!imgs.length) { window.print(); return; }
+      imgs.forEach(img => {
+        if (img.complete) { loaded++; if (loaded === imgs.length) window.print(); }
+        else { img.onload = img.onerror = () => { loaded++; if (loaded === imgs.length) window.print(); }; }
+      });
+    });
+  <\/script>
 </body>
 </html>`;
 
   const win = window.open('', '_blank');
   win.document.write(html);
   win.document.close();
-  win.onload = () => win.print();
 }
 
 function updateStats() {
