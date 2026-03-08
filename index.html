@@ -982,8 +982,8 @@ if (localStorage.getItem('sullen_auth') === '1') {
       </div>
       <div class="grid2 fg">
         <div>
-          <label class="fl">Start Month</label>
-          <select class="fi" id="edit-cap-month-start">
+          <label class="fl">Month</label>
+          <select class="fi" id="edit-cap-month">
             <option value="-1">— Full Season —</option>
             <option value="0">January</option>
             <option value="1">February</option>
@@ -1000,21 +1000,41 @@ if (localStorage.getItem('sullen_auth') === '1') {
           </select>
         </div>
         <div>
-          <label class="fl">End Month</label>
-          <select class="fi" id="edit-cap-month-end">
-            <option value="-1">— Same as Start —</option>
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
+          <label class="fl">Drop Day</label>
+          <select class="fi" id="edit-cap-dropday">
+            <option value="thu">Thursday</option>
+            <option value="tue">Tuesday</option>
+            <option value="1">1st</option>
+            <option value="2">2nd</option>
+            <option value="3">3rd</option>
+            <option value="4">4th</option>
+            <option value="5">5th</option>
+            <option value="6">6th</option>
+            <option value="7">7th</option>
+            <option value="8">8th</option>
+            <option value="9">9th</option>
+            <option value="10">10th</option>
+            <option value="11">11th</option>
+            <option value="12">12th</option>
+            <option value="13">13th</option>
+            <option value="14">14th</option>
+            <option value="15">15th</option>
+            <option value="16">16th</option>
+            <option value="17">17th</option>
+            <option value="18">18th</option>
+            <option value="19">19th</option>
+            <option value="20">20th</option>
+            <option value="21">21st</option>
+            <option value="22">22nd</option>
+            <option value="23">23rd</option>
+            <option value="24">24th</option>
+            <option value="25">25th</option>
+            <option value="26">26th</option>
+            <option value="27">27th</option>
+            <option value="28">28th</option>
+            <option value="29">29th</option>
+            <option value="30">30th</option>
+            <option value="31">31st</option>
           </select>
         </div>
       </div>
@@ -1767,11 +1787,11 @@ function openEditCap(id) {
   document.getElementById('edit-cap-season').value = c.s || 'spring';
   document.getElementById('edit-cap-type').value = c.type || 'capsule';
   document.getElementById('edit-cap-desc').value = c.desc || '';
-  // Month range
-  const ms = c.months ? c.months[0] : -1;
-  const me = c.months ? c.months[1] : -1;
-  document.getElementById('edit-cap-month-start').value = ms;
-  document.getElementById('edit-cap-month-end').value = me === ms ? -1 : me;
+  // Month — use start month or -1 for full season
+  const mo = c.months ? c.months[0] : -1;
+  document.getElementById('edit-cap-month').value = mo;
+  // Drop day
+  document.getElementById('edit-cap-dropday').value = c.dropDay || 'thu';
   // Color swatches
   document.querySelectorAll('#editColorRow .cswatch').forEach(s => {
     s.classList.toggle('sel', s.dataset.c === c.color);
@@ -1793,18 +1813,15 @@ function saveEditCap() {
   const id = document.getElementById('edit-cap-id').value;
   const c = S.capsules.find(x => x.id === id);
   if (!c) return;
-  c.name   = document.getElementById('edit-cap-name').value.trim() || c.name;
-  c.s      = document.getElementById('edit-cap-season').value;
-  c.type   = document.getElementById('edit-cap-type').value;
-  c.desc   = document.getElementById('edit-cap-desc').value.trim();
-  c.color  = editPickedColor;
-  const ms = parseInt(document.getElementById('edit-cap-month-start').value);
-  const me = parseInt(document.getElementById('edit-cap-month-end').value);
-  if (ms === -1) {
-    c.months = null; // full season
-  } else {
-    c.months = [ms, me === -1 ? ms : me];
-  }
+  c.name    = document.getElementById('edit-cap-name').value.trim() || c.name;
+  c.s       = document.getElementById('edit-cap-season').value;
+  c.type    = document.getElementById('edit-cap-type').value;
+  c.desc    = document.getElementById('edit-cap-desc').value.trim();
+  c.color   = editPickedColor;
+  const mo  = parseInt(document.getElementById('edit-cap-month').value);
+  c.months  = mo === -1 ? null : [mo, mo];
+  const dd  = document.getElementById('edit-cap-dropday').value;
+  c.dropDay = dd; // 'thu', 'tue', or a day number string
   closeEditCap();
   syncToFirebase();
   render();
