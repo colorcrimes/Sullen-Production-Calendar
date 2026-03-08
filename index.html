@@ -1326,7 +1326,8 @@ function loadYear(y) {
   const yearTimeout = setTimeout(() => {
     console.warn('Year load timeout — running offline');
     setSyncStatus('error');
-  }, 5000);
+    render();
+  }, 1000);
 
   yearUnsubscribe = onSnapshot(yearDoc(y), (snap) => {
     clearTimeout(yearTimeout);
@@ -1588,7 +1589,12 @@ initEvents();
 
 // ═══ RENDER ═══
 function render() {
-  renderSidebar(); renderCalendar(); updateStats();
+  try {
+    renderSidebar(); renderCalendar(); updateStats();
+  } catch(e) {
+    console.error('Render error:', e);
+    document.getElementById('monthsWrap').innerHTML = `<div style="color:red;padding:20px;font-family:monospace">Render error: ${e.message}</div>`;
+  }
 }
 
 function renderSidebar() {
@@ -3092,7 +3098,7 @@ window.addEventListener('DOMContentLoaded', () => {
     setSyncStatus('error');
     renderYearTabs();
     render();
-  }, 5000);
+  }, 1000);
 
   onSnapshot(META_DOC, (snap) => {
     clearTimeout(bootTimeout);
