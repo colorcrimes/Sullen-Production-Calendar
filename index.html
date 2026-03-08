@@ -844,9 +844,7 @@ if (localStorage.getItem('sullen_auth') === '1') {
             <button onclick="upCalNav(1)" style="background:transparent;border:1px solid #222;color:#888;width:26px;height:26px;border-radius:2px;cursor:pointer;font-size:14px;line-height:1">›</button>
           </div>
           <!-- Day headers -->
-          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
-            ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div style="font-family:var(--font-ui);font-size:9px;color:#333;text-align:center;padding:2px 0;font-weight:700;letter-spacing:.5px">${d}</div>`).join('')}
-          </div>
+          <div id="upCalDayHeaders" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px"></div>
           <!-- Day grid -->
           <div id="upCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px"></div>
           <!-- Suggested dates hint -->
@@ -2229,7 +2227,6 @@ function rebuildDates() {
   document.getElementById('up-date-label').style.color = '#555';
   document.getElementById('upCalPicker').style.display = 'none';
   upCalMonth = new Date(S.year, 0, 1); // reset to Jan of current year
-  renderUpCal();
 }
 
 function toggleCustomDate() {} // no longer needed, kept for safety
@@ -2264,6 +2261,12 @@ function renderUpCal() {
   const tues = getTuesdays(y, m).map(d => d.getDate());
   const thurs = getThursdays(y, m).map(d => d.getDate());
   const suggested = new Set(isTueOnly ? tues : [...tues, ...thurs]);
+
+  // Day headers
+  document.getElementById('upCalDayHeaders').innerHTML =
+    ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d =>
+      `<div style="font-family:var(--font-ui);font-size:9px;color:#444;text-align:center;padding:2px 0;font-weight:700;letter-spacing:.5px">${d}</div>`
+    ).join('');
 
   // Build grid
   const firstDay = new Date(y, m, 1).getDay();
