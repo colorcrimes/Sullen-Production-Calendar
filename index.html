@@ -2841,14 +2841,9 @@ function compressImage(src, maxW, quality, cb) {
 }
 
 function readFile(file) {
-  const pvGrid = document.getElementById('pvGrid');
-  pvGrid.innerHTML += `<div class="pv-item" id="pv-loading-${file.name}" style="opacity:.4"><div class="dz-icon">⏳</div><div class="pv-name">${file.name}</div></div>`;
   const r = new FileReader();
   r.onload = ev => {
     compressImage(ev.target.result, 900, 0.72, compressed => {
-      // Remove loading placeholder
-      const loader = document.getElementById(`pv-loading-${file.name}`);
-      if (loader) loader.remove();
       S.pendingFiles.push({ id:`f${Date.now()}${Math.random()}`, name:file.name, src:compressed });
       renderPreviews();
       const nameField = document.getElementById('up-name');
@@ -2858,11 +2853,7 @@ function readFile(file) {
       }
     });
   };
-  r.onerror = () => {
-    const loader = document.getElementById(`pv-loading-${file.name}`);
-    if (loader) loader.remove();
-    alert(`Could not read file: ${file.name}`);
-  };
+  r.onerror = () => alert(`Could not read file: ${file.name}`);
   r.readAsDataURL(file);
 }
 function renderPreviews() {
