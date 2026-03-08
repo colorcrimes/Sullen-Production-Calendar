@@ -947,6 +947,105 @@ if (localStorage.getItem('sullen_auth') === '1') {
   </div>
 </div>
 
+<!-- EDIT CAPSULE MODAL -->
+<div class="overlay hidden" id="editCapOverlay">
+  <div class="modal" style="width:480px">
+    <div class="modal-hdr">
+      <div class="modal-title">Edit Capsule</div>
+      <button class="modal-x" onclick="closeEditCap()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-cap-id">
+      <div class="fg">
+        <label class="fl">Capsule Name</label>
+        <input class="fi" id="edit-cap-name">
+      </div>
+      <div class="grid2 fg">
+        <div>
+          <label class="fl">Season</label>
+          <select class="fi" id="edit-cap-season">
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="fall">Fall</option>
+            <option value="holiday">Holiday</option>
+            <option value="all">Year-Round</option>
+          </select>
+        </div>
+        <div>
+          <label class="fl">Type</label>
+          <select class="fi" id="edit-cap-type">
+            <option value="capsule">Capsule Drop (Thu)</option>
+            <option value="artist">Artist Series (Tue)</option>
+            <option value="basic">Basic / Delivery</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2 fg">
+        <div>
+          <label class="fl">Start Month</label>
+          <select class="fi" id="edit-cap-month-start">
+            <option value="-1">— Full Season —</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+        <div>
+          <label class="fl">End Month</label>
+          <select class="fi" id="edit-cap-month-end">
+            <option value="-1">— Same as Start —</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Color Label</label>
+        <div class="color-row" id="editColorRow">
+          <div class="cswatch" style="background:var(--red)"    data-c="#c8102e" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--yellow)" data-c="#f5c518" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--green)"  data-c="#2db84b" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--pink)"   data-c="#e91e8c" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--blue)"   data-c="#1565c0" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--orange)" data-c="#e65c00" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:var(--purple)" data-c="#7b2fbe" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:#4fc3f7"       data-c="#4fc3f7" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:#00838f"       data-c="#00838f" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:#e040fb"       data-c="#e040fb" onclick="pickEditColor(this)"></div>
+          <div class="cswatch" style="background:#ff8c00"       data-c="#ff8c00" onclick="pickEditColor(this)"></div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Concept Notes</label>
+        <textarea class="fi" id="edit-cap-desc" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeEditCap()">Cancel</button>
+      <button class="btn btn-red" onclick="saveEditCap()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- TUESDAY CAPSULE META MODAL -->
 <div class="overlay hidden" id="tueMetaOverlay">
   <div class="modal" style="border-top-color:#4fc3f7;width:420px">
@@ -1533,10 +1632,10 @@ function initEvents() {
 
   // ── MARCH ──
   const marThus = getThursdays(y, 2);
-  // Badge Series Mar 1–9 daily
-  for (let day = 1; day <= 9; day++) {
+  // Badge Series Mar 1–8 daily
+  for (let day = 1; day <= 8; day++) {
     const d = new Date(y, 2, day);
-    S.events[dk(d)] = { capId:'badge-series', label:`BADGE DAY ${day}`, sublabel:`Badge Tee #${day} of 9`, color:'#ff8c00', isBadge:true };
+    S.events[dk(d)] = { capId:'badge-series', label:`BADGE DAY ${day}`, sublabel:`Badge Tee #${day} of 8`, color:'#ff8c00', isBadge:true };
   }
   if (marThus[1]) S.events[dk(marThus[1])] = { capId:'skate-day',   label:'WORLD SKATE DAY', sublabel:'🛹 World Skateboarding Day Tee', color:'#00bcd4' };
   const lastMarThu = marThus[marThus.length - 1];
@@ -1657,7 +1756,59 @@ function renderSidebar() {
   document.getElementById('capList').innerHTML = yearRoundHTML + groupsHTML;
 }
 
-function countByCap(id) {
+let editPickedColor = '#c8102e';
+
+function openEditCap(id) {
+  const c = S.capsules.find(x => x.id === id);
+  if (!c) return;
+  editPickedColor = c.color;
+  document.getElementById('edit-cap-id').value = id;
+  document.getElementById('edit-cap-name').value = c.name;
+  document.getElementById('edit-cap-season').value = c.s || 'spring';
+  document.getElementById('edit-cap-type').value = c.type || 'capsule';
+  document.getElementById('edit-cap-desc').value = c.desc || '';
+  // Month range
+  const ms = c.months ? c.months[0] : -1;
+  const me = c.months ? c.months[1] : -1;
+  document.getElementById('edit-cap-month-start').value = ms;
+  document.getElementById('edit-cap-month-end').value = me === ms ? -1 : me;
+  // Color swatches
+  document.querySelectorAll('#editColorRow .cswatch').forEach(s => {
+    s.classList.toggle('sel', s.dataset.c === c.color);
+  });
+  document.getElementById('editCapOverlay').classList.remove('hidden');
+}
+
+function closeEditCap() {
+  document.getElementById('editCapOverlay').classList.add('hidden');
+}
+
+function pickEditColor(el) {
+  document.querySelectorAll('#editColorRow .cswatch').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  editPickedColor = el.dataset.c;
+}
+
+function saveEditCap() {
+  const id = document.getElementById('edit-cap-id').value;
+  const c = S.capsules.find(x => x.id === id);
+  if (!c) return;
+  c.name   = document.getElementById('edit-cap-name').value.trim() || c.name;
+  c.s      = document.getElementById('edit-cap-season').value;
+  c.type   = document.getElementById('edit-cap-type').value;
+  c.desc   = document.getElementById('edit-cap-desc').value.trim();
+  c.color  = editPickedColor;
+  const ms = parseInt(document.getElementById('edit-cap-month-start').value);
+  const me = parseInt(document.getElementById('edit-cap-month-end').value);
+  if (ms === -1) {
+    c.months = null; // full season
+  } else {
+    c.months = [ms, me === -1 ? ms : me];
+  }
+  closeEditCap();
+  syncToFirebase();
+  render();
+}
   return Object.keys(S.products).filter(k => k.endsWith('__' + id)).reduce((a, k) => a + S.products[k].length, 0);
 }
 
@@ -1669,6 +1820,7 @@ function capTagHTML(c) {
       <div class="dot" style="background:${c.color}"></div>
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${c.name}</span>
       ${count > 0 ? `<span class="badge">${count}</span>` : ''}
+      <button onclick="openEditCap('${c.id}')" style="background:none;border:none;color:#444;font-size:10px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0" title="Edit capsule">✏</button>
       ${!isBuiltIn ? `<button onclick="deleteCapsule('${c.id}')" style="background:none;border:none;color:#444;font-size:11px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0" title="Delete capsule">✕</button>` : ''}
     </div>
   `;
@@ -1816,9 +1968,9 @@ function renderArtistSection(tuesdays) {
   `;
 }
 
-// ─── BADGE SERIES: Mar 1–9, one badge tee per day ───
+// ─── BADGE SERIES: Mar 1–8, one badge tee per day ───
 function renderBadgeSeriesSection(y) {
-  const days = Array.from({length:9}, (_,i) => new Date(y, 2, i+1)); // Mar 1–9
+  const days = Array.from({length:8}, (_,i) => new Date(y, 2, i+1)); // Mar 1–8
   const cells = days.map(d => {
     const key = dk(d) + '__badge-series';
     const prods = S.products[key] || [];
@@ -1833,7 +1985,7 @@ function renderBadgeSeriesSection(y) {
           <div style="font-family:var(--font-d);font-size:15px;letter-spacing:1px;color:#ff8c00">Day ${num}</div>
           <div style="font-family:var(--font-ui);font-size:8px;color:#553a00;letter-spacing:.5px">${fmt(d)}</div>
         </div>
-        <div style="font-family:var(--font-ui);font-size:8px;color:rgba(255,140,0,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Badge Tee #${num}/9</div>
+        <div style="font-family:var(--font-ui);font-size:8px;color:rgba(255,140,0,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Badge Tee #${num}/8</div>
         ${renderCellProducts(prods, key)}
         <button class="add-btn" onclick="openUploadModal('${key}')">+</button>
       </div>
@@ -1844,15 +1996,14 @@ function renderBadgeSeriesSection(y) {
     <div style="border-bottom:2px solid #2a1a00">
       <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0f0800;border-bottom:1px solid #1f1000">
         <div style="width:8px;height:8px;background:#ff8c00;border-radius:1px;flex-shrink:0"></div>
-        <span style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:2px;color:#ff8c00;text-transform:uppercase">Badge Series — Mar 1–9 · One Badge Tee Per Day</span>
+        <span style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:2px;color:#ff8c00;text-transform:uppercase">Badge Series — Mar 1–8 · One Badge Tee Per Day</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(9,1fr);border-top:1px solid #1f1000">
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);border-top:1px solid #1f1000">
         ${cells}
       </div>
     </div>
   `;
 }
-
 // ─── CYBER WEEK: Nov 30 week — Mon–Fri daily drops ───
 function renderCyberWeekSection(y, currentMonth) {
   // Find the Mon–Fri of the Nov 30 week
@@ -3119,7 +3270,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect, renderPreviews,
-    openCapModal, createCap, pickColor, deleteCapsule,
+    openCapModal, createCap, pickColor, deleteCapsule, openEditCap, closeEditCap, pickEditColor, saveEditCap,
     setSeason, setMonth, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
     showShare, copyShare,
