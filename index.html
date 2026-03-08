@@ -744,6 +744,7 @@ if (localStorage.getItem('sullen_auth') === '1') {
   <div class="header-actions">
     <button class="btn btn-ghost btn-sm" onclick="showShare()">⬆ Share</button>
     <button class="btn btn-ghost btn-sm" onclick="openCapModal()">+ Capsule</button>
+    <button class="btn btn-ghost btn-sm" onclick="printCalendar()">🖨 Print</button>
     <button class="btn btn-red btn-sm" onclick="openUploadModal(null)">Upload CADs</button>
   </div>
 </header>
@@ -3161,6 +3162,103 @@ function ctxDo(a) {
 document.addEventListener('click',()=>document.getElementById('ctxMenu').classList.add('hidden'));
 
 // ═══ STATS ═══
+// ═══ PRINT / EXPORT ═══
+function printCalendar() {
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const sc = SEASON_STYLE;
+
+  // Group all products by month
+  const byMonth = {};
+  Object.entries(S.products).forEach(([key, prods]) => {
+    if (!prods.length) return;
+    if (key.startsWith('acc__')) return;
+    const dkStr = key.split('__')[0];
+    const capId = key.split('__')[1];
+    const cap = S.capsules.find(c => c.id === capId);
+    const parts = dkStr.split('-');
+    if (parts.length !== 3) return;
+    const mo = parseInt(parts[1]);
+    if (!byMonth[mo]) byMonth[mo] = [];
+    const d = new Date(parseInt(parts[0]), mo, parseInt(parts[2]));
+    prods.forEach(p => {
+      byMonth[mo].push({ p, d, cap, key });
+    });
+  });
+
+  // Sort months
+  const months = Object.keys(byMonth).map(Number).sort((a,b) => a - b);
+  if (!months.length) { alert('No CADs to print.'); return; }
+
+  const seasonColor = { spring:'#c8a800', summer:'#1a7a30', fall:'#b84a00', holiday:'#0d3d80' };
+
+  const monthSections = months.map(mo => {
+    const meta = MONTHS[mo];
+    const sColor = seasonColor[meta.s] || '#333';
+    const items = byMonth[mo].sort((a,b) => a.d - b.d);
+
+    const cards = items.map(({ p, d, cap }) => {
+      const dateStr = `${DOW[d.getDay()]} ${fmt(d)}`;
+      const capName = cap ? cap.name : '';
+      const imgHtml = p.src
+        ? `<img src="${p.src}" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block">`
+        : `<div style="width:100%;height:160px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999">No Image</div>`;
+      return `
+        <div style="border:1px solid #ddd;border-radius:3px;overflow:hidden;break-inside:avoid;page-break-inside:avoid">
+          ${imgHtml}
+          <div style="padding:6px 8px;background:#fff">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'Untitled'}</div>
+            <div style="font-size:9px;color:#666">${capName}</div>
+            <div style="font-size:9px;color:#999">${dateStr}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div style="margin-bottom:28px;break-inside:avoid">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid ${sColor}">
+          <div style="font-family:Arial Black,sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#111">${MONTH_NAMES[mo]}</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${sColor};background:${sColor}22;padding:3px 8px;border-radius:2px">${meta.s.toUpperCase()}</div>
+          <div style="font-size:9px;color:#999;margin-left:auto">${items.length} SKU${items.length!==1?'s':''}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+          ${cards}
+        </div>
+      </div>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sullen Release Calendar ${S.year}</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Arial, sans-serif; background:#fff; color:#111; padding:20px; }
+  @media print {
+    body { padding:10px; }
+    @page { size: landscape; margin:12mm; }
+  }
+</style>
+</head>
+<body>
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:3px solid #111">
+    <div>
+      <div style="font-family:Arial Black,sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;text-transform:uppercase">SULLEN ART COLLECTIVE</div>
+      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#666">Release Calendar ${S.year}</div>
+    </div>
+    <div style="margin-left:auto;font-size:11px;color:#999">Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+  </div>
+  ${monthSections}
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => win.print();
+}
+
 function updateStats() {
   const all=Object.values(S.products).flat();
   document.getElementById('st-skus').textContent=all.length;
@@ -3292,7 +3390,7 @@ window.addEventListener('DOMContentLoaded', () => {
     openCapModal, createCap, pickColor, deleteCapsule, openEditCap, closeEditCap, pickEditColor, saveEditCap,
     setSeason, setMonth, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
-    showShare, copyShare,
+    showShare, copyShare, printCalendar,
     openTueMetaModal, closeTueMeta, saveTueMeta, clearTueMeta,
     pickSlots, pickTueColor, editTueMeta,
     openLcModal, closeLcModal, lcToggle, lcSales, saveLcModal,
@@ -3304,33 +3402,29 @@ window.addEventListener('DOMContentLoaded', () => {
     viewAsset, closeAssetViewer,
   });
 
-  // ── Boot: load meta (years list + capsules) then active year
+  // ── Boot: render immediately so calendar is never blank ──
+  renderYearTabs();
+  render();
   setSyncStatus('loading');
 
-  // Fallback: if Firebase doesn't respond in 5s, render anyway
+  // Then connect Firebase in background
   const bootTimeout = setTimeout(() => {
-    console.warn('Firebase timeout — rendering offline');
     setSyncStatus('error');
-    renderYearTabs();
-    render();
-  }, 1000);
+  }, 5000);
 
   onSnapshot(META_DOC, (snap) => {
     clearTimeout(bootTimeout);
     if (snap.exists()) {
       const data = snap.data();
       if (data.years && data.years.length) S.years = data.years.sort();
-      // Only replace capsules if Firestore has more than we have built-in
       if (data.capsules && data.capsules.length > S.capsules.length) S.capsules = data.capsules;
     }
     renderYearTabs();
-    render(); // always render after meta loads
+    render();
   }, (err) => {
     clearTimeout(bootTimeout);
     console.error('Meta listen error:', err);
     setSyncStatus('error');
-    renderYearTabs();
-    render();
   });
 
   // Load the current year's data
