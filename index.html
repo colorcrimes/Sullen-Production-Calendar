@@ -1932,10 +1932,11 @@ function renderCustomDatesSection(meta) {
   const customKeys = Object.keys(S.products).filter(key => {
     if (key.startsWith('acc__')) return false;
     const dkStr = key.split('__')[0];
-    if (dkStr.length !== 8) return false;
-    const d = new Date(dkStr.slice(0,4)+'-'+dkStr.slice(4,6)+'-'+dkStr.slice(6,8)+'T12:00:00');
-    if (isNaN(d)) return false;
-    if (d.getFullYear() !== y || d.getMonth() !== meta.m) return false;
+    // dk format is "YYYY-M-D" (month is 0-indexed)
+    const parts = dkStr.split('-');
+    if (parts.length !== 3) return false;
+    const yr = parseInt(parts[0]), mo = parseInt(parts[1]), day = parseInt(parts[2]);
+    if (yr !== y || mo !== meta.m) return false;
     if (tues.has(dkStr) || thurs.has(dkStr)) return false;
     if ((S.products[key] || []).length === 0) return false;
     return true;
@@ -1951,8 +1952,12 @@ function renderCustomDatesSection(meta) {
     byDate[dkStr].push(key);
   });
 
-  const cells = Object.keys(byDate).sort().map(dkStr => {
-    const d = new Date(dkStr.slice(0,4)+'-'+dkStr.slice(4,6)+'-'+dkStr.slice(6,8)+'T12:00:00');
+  const cells = Object.keys(byDate).sort((a,b) => {
+    const pa = a.split('-'), pb = b.split('-');
+    return parseInt(pa[2]) - parseInt(pb[2]);
+  }).map(dkStr => {
+    const parts = dkStr.split('-');
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
     const dateLabel = `${DOW[d.getDay()]} ${fmt(d)}`;
     const keysForDate = byDate[dkStr];
 
