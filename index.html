@@ -509,6 +509,14 @@
   .color-row { display: flex; gap: 7px; flex-wrap: wrap; }
   .cswatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
   .cswatch:hover { transform: scale(1.2); }
+  .tag-btn {
+    font-family: var(--font-ui); font-size: 10px; letter-spacing: .5px;
+    padding: 3px 8px; border: 1px solid #2a2a2a; border-radius: 1px;
+    cursor: pointer; color: #555; background: transparent; text-transform: uppercase;
+    transition: all .12s; user-select: none;
+  }
+  .tag-btn:hover { color: var(--white); border-color: #444; }
+  .tag-btn.active { color: var(--black); background: var(--white); border-color: var(--white); }
   .cswatch.sel { border-color: var(--white); }
 
   .share-bar { background: #0b200b; border: 1px solid var(--green); border-radius: 2px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -1059,15 +1067,42 @@ if (localStorage.getItem('sullen_auth') === '1') {
         <label class="fl">Concept Notes</label>
         <textarea class="fi" id="edit-cap-desc" rows="2"></textarea>
       </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeEditCap()">Cancel</button>
-      <button class="btn btn-red" onclick="saveEditCap()">Save Changes</button>
-    </div>
-  </div>
-</div>
-
-<!-- TUESDAY CAPSULE META MODAL -->
+      <div class="fg">
+        <label class="fl">Tags</label>
+        <div id="editTagsWrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 0">
+          <!-- Art Style -->
+          <div style="width:100%;font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Art Style</div>
+          <div class="tag-btn" data-tag="Dark Illustrative" onclick="toggleTag(this)">Dark Illustrative</div>
+          <div class="tag-btn" data-tag="Traditional" onclick="toggleTag(this)">Traditional</div>
+          <div class="tag-btn" data-tag="Chicano" onclick="toggleTag(this)">Chicano</div>
+          <div class="tag-btn" data-tag="Blackwork" onclick="toggleTag(this)">Blackwork</div>
+          <div class="tag-btn" data-tag="Lettering" onclick="toggleTag(this)">Lettering</div>
+          <div class="tag-btn" data-tag="Portrait" onclick="toggleTag(this)">Portrait</div>
+          <div class="tag-btn" data-tag="Flash" onclick="toggleTag(this)">Flash</div>
+          <!-- Vibe -->
+          <div style="width:100%;font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:6px;margin-bottom:2px">Vibe</div>
+          <div class="tag-btn" data-tag="Dark" onclick="toggleTag(this)">Dark</div>
+          <div class="tag-btn" data-tag="Religious" onclick="toggleTag(this)">Religious</div>
+          <div class="tag-btn" data-tag="Street" onclick="toggleTag(this)">Street</div>
+          <div class="tag-btn" data-tag="Nature" onclick="toggleTag(this)">Nature</div>
+          <div class="tag-btn" data-tag="Occult" onclick="toggleTag(this)">Occult</div>
+          <div class="tag-btn" data-tag="Coastal" onclick="toggleTag(this)">Coastal</div>
+          <div class="tag-btn" data-tag="Horror" onclick="toggleTag(this)">Horror</div>
+          <div class="tag-btn" data-tag="Patriotic" onclick="toggleTag(this)">Patriotic</div>
+          <!-- Season -->
+          <div style="width:100%;font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:6px;margin-bottom:2px">Season</div>
+          <div class="tag-btn" data-tag="Spring" onclick="toggleTag(this)">Spring</div>
+          <div class="tag-btn" data-tag="Summer" onclick="toggleTag(this)">Summer</div>
+          <div class="tag-btn" data-tag="Fall" onclick="toggleTag(this)">Fall</div>
+          <div class="tag-btn" data-tag="Holiday" onclick="toggleTag(this)">Holiday</div>
+          <div class="tag-btn" data-tag="Year-Round" onclick="toggleTag(this)">Year-Round</div>
+          <!-- Gender -->
+          <div style="width:100%;font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:6px;margin-bottom:2px">Gender</div>
+          <div class="tag-btn" data-tag="Mens" onclick="toggleTag(this)">Mens</div>
+          <div class="tag-btn" data-tag="Womens" onclick="toggleTag(this)">Womens</div>
+          <div class="tag-btn" data-tag="Unisex" onclick="toggleTag(this)">Unisex</div>
+        </div>
+      </div>
 <div class="overlay hidden" id="tueMetaOverlay">
   <div class="modal" style="border-top-color:#4fc3f7;width:420px">
     <div class="modal-hdr">
@@ -1779,7 +1814,19 @@ function renderSidebar() {
 
 let editPickedColor = '#c8102e';
 
-function openEditCap(id) {
+function toggleTag(el) {
+  el.classList.toggle('active');
+}
+
+function getSelectedTags() {
+  return [...document.querySelectorAll('#editTagsWrap .tag-btn.active')].map(el => el.dataset.tag);
+}
+
+function setSelectedTags(tags) {
+  document.querySelectorAll('#editTagsWrap .tag-btn').forEach(el => {
+    el.classList.toggle('active', tags && tags.includes(el.dataset.tag));
+  });
+}
   const c = S.capsules.find(x => x.id === id);
   if (!c) return;
   editPickedColor = c.color;
@@ -1798,7 +1845,7 @@ function openEditCap(id) {
     s.classList.toggle('sel', s.dataset.c === c.color);
   });
   document.getElementById('editCapOverlay').classList.remove('hidden');
-}
+  setSelectedTags(c.tags || []);
 
 function closeEditCap() {
   document.getElementById('editCapOverlay').classList.add('hidden');
@@ -1823,6 +1870,7 @@ function saveEditCap() {
   c.months  = mo === -1 ? null : [mo, mo];
   const dd  = document.getElementById('edit-cap-dropday').value;
   c.dropDay = dd; // 'thu', 'tue', or a day number string
+  c.tags    = getSelectedTags();
   closeEditCap();
   syncToFirebase();
   render();
@@ -3401,7 +3449,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Expose all onclick-referenced functions to global scope (required for ES modules)
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect, renderPreviews,
-    openCapModal, createCap, pickColor, deleteCapsule, openEditCap, closeEditCap, pickEditColor, saveEditCap,
+    openCapModal, createCap, pickColor, deleteCapsule, openEditCap, closeEditCap, pickEditColor, saveEditCap, toggleTag,
     setSeason, setMonth, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
     showShare, copyShare, printCalendar,
