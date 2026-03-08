@@ -2741,22 +2741,32 @@ function cleanFileName(filename) {
 function onFileSelect(e) { Array.from(e.target.files).forEach(readFile); }
 function compressImage(src, maxW, quality, cb) {
   const img = new Image();
+  const timeout = setTimeout(() => { cb(src); }, 3000); // fallback after 3s
   img.onload = () => {
-    const scale = Math.min(1, maxW / img.width);
-    const w = Math.round(img.width  * scale);
-    const h = Math.round(img.height * scale);
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    cb(canvas.toDataURL('image/jpeg', quality));
+    clearTimeout(timeout);
+    try {
+      const scale = Math.min(1, maxW / img.width);
+      const w = Math.round(img.width  * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', quality));
+    } catch(e) { cb(src); }
   };
+  img.onerror = () => { clearTimeout(timeout); cb(src); };
   img.src = src;
 }
 
 function readFile(file) {
+  const pvGrid = document.getElementById('pvGrid');
+  pvGrid.innerHTML += `<div class="pv-item" id="pv-loading-${file.name}" style="opacity:.4"><div class="dz-icon">⏳</div><div class="pv-name">${file.name}</div></div>`;
   const r = new FileReader();
   r.onload = ev => {
     compressImage(ev.target.result, 900, 0.72, compressed => {
+      // Remove loading placeholder
+      const loader = document.getElementById(`pv-loading-${file.name}`);
+      if (loader) loader.remove();
       S.pendingFiles.push({ id:`f${Date.now()}${Math.random()}`, name:file.name, src:compressed });
       renderPreviews();
       const nameField = document.getElementById('up-name');
@@ -2765,6 +2775,11 @@ function readFile(file) {
         nameField.dataset.autoFilled = 'true';
       }
     });
+  };
+  r.onerror = () => {
+    const loader = document.getElementById(`pv-loading-${file.name}`);
+    if (loader) loader.remove();
+    alert(`Could not read file: ${file.name}`);
   };
   r.readAsDataURL(file);
 }
