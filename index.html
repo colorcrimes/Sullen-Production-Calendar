@@ -2316,9 +2316,25 @@ function openUploadModal(preKey) {
     } else {
       const [datePart, capId] = preKey.split('__');
       [...capSel.options].forEach(o => { if(o.value===capId) o.selected=true; });
-      buildDates(capId, datePart);
+      // Pre-fill the date from the cell key and lock it — no need to pick again
+      const dParts = datePart.split('-');
+      const d = new Date(parseInt(dParts[0]), parseInt(dParts[1]), parseInt(dParts[2]));
+      const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const label = `${DOW[d.getDay()]} ${fmt(d)}`;
+      document.getElementById('up-date').value = preKey; // full key as the value
+      document.getElementById('up-date-label').textContent = label;
+      document.getElementById('up-date-label').style.color = '#f0ede8';
+      document.getElementById('upCalPicker').style.display = 'none';
+      // Disable the date picker since date is already set by the cell
+      document.getElementById('up-date-display').onclick = null;
+      document.getElementById('up-date-display').style.cursor = 'default';
+      document.getElementById('up-date-display').style.opacity = '0.6';
     }
   } else {
+    // Opened from Upload CADs button — re-enable date picker
+    document.getElementById('up-date-display').onclick = toggleDatePicker;
+    document.getElementById('up-date-display').style.cursor = 'pointer';
+    document.getElementById('up-date-display').style.opacity = '1';
     buildDates(capSel.value, null);
   }
 
@@ -2442,7 +2458,12 @@ function buildDates(capId, selectDk) {
   renderUpCal();
 }
 
-function closeUpload() { document.getElementById('uploadOverlay').classList.add('hidden'); }
+function closeUpload() {
+  document.getElementById('uploadOverlay').classList.add('hidden');
+  // Reset date picker to clickable for next open
+  const dd = document.getElementById('up-date-display');
+  if (dd) { dd.onclick = toggleDatePicker; dd.style.cursor = 'pointer'; dd.style.opacity = '1'; }
+}
 
 // ═══ PRODUCT DETAIL LIGHTBOX ═══
 let detailKey = null, detailPid = null;
