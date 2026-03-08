@@ -756,6 +756,23 @@ if (localStorage.getItem('sullen_auth') === '1') {
   <div class="chip chip-fa" onclick="setSeason('fall',this)">Fall</div>
   <div class="chip chip-ho" onclick="setSeason('holiday',this)">Holiday</div>
   <div class="tbar-divider"></div>
+  <span class="tlabel">Month:</span>
+  <select id="monthSelect" onchange="setMonth(parseInt(this.value),this)" style="background:#111;color:#f0ede8;border:1px solid #2a2a2a;border-radius:2px;font-family:var(--font-ui);font-size:11px;letter-spacing:.5px;padding:3px 6px;cursor:pointer;height:26px">
+    <option value="-1">All</option>
+    <option value="0">January</option>
+    <option value="1">February</option>
+    <option value="2">March</option>
+    <option value="3">April</option>
+    <option value="4">May</option>
+    <option value="5">June</option>
+    <option value="6">July</option>
+    <option value="7">August</option>
+    <option value="8">September</option>
+    <option value="9">October</option>
+    <option value="10">November</option>
+    <option value="11">December</option>
+  </select>
+  <div class="tbar-divider"></div>
   <span class="tlabel">Year:</span>
   <div id="yearTabsContainer" style="display:flex;gap:6px;align-items:center"></div>
   <div class="tbar-divider"></div>
@@ -1432,6 +1449,7 @@ let S = {
   year: 2026,
   years: [2026, 2027],
   seasonFilter: 'all',
+  monthFilter: -1,
   typeView: 'all',
   pickedColor: '#c8102e',
   pendingFiles: [],
@@ -1675,7 +1693,11 @@ function deleteCapsule(id) {
 
 function renderCalendar() {
   const wrap = document.getElementById('monthsWrap');
-  const months = MONTHS.filter(m => S.seasonFilter==='all' || m.s===S.seasonFilter);
+  const months = MONTHS.filter(m => {
+    if (S.seasonFilter !== 'all' && m.s !== S.seasonFilter) return false;
+    if (S.monthFilter !== -1 && m.m !== S.monthFilter) return false;
+    return true;
+  });
   wrap.innerHTML = months.map(m => renderMonth(m)).join('');
 
   wrap.querySelectorAll('.day-cell').forEach(cell => {
@@ -2920,10 +2942,21 @@ function pickColor(el) {
 
 // ═══ FILTERS ═══
 function setSeason(s, el) {
-  document.querySelectorAll('.chip').forEach(c => {
-    if(['chip-all','chip-sp','chip-su','chip-fa','chip-ho'].some(cls=>c.classList.contains(cls))) c.classList.remove('active');
-  });
-  el.classList.add('active'); S.seasonFilter = s; render();
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // Re-activate the month chip and view chip
+  const mEl = document.getElementById(S.monthFilter === -1 ? 'mf-all' : `mf-${S.monthFilter}`);
+  if (mEl) mEl.classList.add('active');
+  const vEl = document.getElementById(`vtype-${S.typeView}`);
+  if (vEl) vEl.classList.add('active');
+  S.seasonFilter = s; render();
+}
+
+function setMonth(m) {
+  S.monthFilter = m;
+  const sel = document.getElementById('monthSelect');
+  if (sel) sel.value = m;
+  render();
 }
 function setTypeView(t, el) {
   document.querySelectorAll('[id^="vtype-"]').forEach(e=>e.classList.remove('active'));
@@ -3096,7 +3129,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object.assign(window, {
     openUploadModal, closeUpload, confirmUpload, rebuildDates, toggleCustomDate, toggleDatePicker, upCalNav, selectUpCalDate, onFileSelect, renderPreviews,
     openCapModal, createCap, pickColor, deleteCapsule,
-    setSeason, setTypeView, setYear, addYear, renderYearTabs,
+    setSeason, setMonth, setTypeView, setYear, addYear, renderYearTabs,
     removeProduct, showCtx, ctxDo,
     showShare, copyShare,
     openTueMetaModal, closeTueMeta, saveTueMeta, clearTueMeta,
